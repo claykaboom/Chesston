@@ -10,7 +10,7 @@ namespace ChessTonGame.Classes.Pecas
     {
 
         public Peao(CorElemento cor, Casa casa)
-            : base(cor, casa)
+            : base(cor, casa,false)
         {
         }
 

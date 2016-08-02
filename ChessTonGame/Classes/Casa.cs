@@ -21,11 +21,7 @@ namespace ChessTonGame.Classes
         private Casa _casaDireita;
         private Casa casaEsquerda;
         private Casa _casaSuperior;
-        private Casa casaInferior;
-        private Casa casaSuperiorDireita;
-        private Casa casaSuperiorEsquerda;
-        private Casa casaInferiorDireita;
-        private Casa casaInferiorEsquerda;
+        private Casa casaInferior; 
         private Tabuleiro tabuleiro;
         private string nome;
         private CorElemento cor;

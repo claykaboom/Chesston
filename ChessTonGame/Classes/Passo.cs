@@ -14,6 +14,14 @@ namespace ChessTonGame.Classes
         FrenteIndefinido,
         TrasIndefinido,
         DireitaIndefinido,
-        EsquerdaIndefinido, 
+        EsquerdaIndefinido,
+        DiagonalDireitaFrente,
+        DiagonalEsquerdaFrente,
+        DiagonalDireitaTras,
+        DiagonalEsquerdaTras,
+        DiagonalDireitaFrenteIndefinido,
+        DiagonalEsquerdaFrenteIndefinido,
+        DiagonalDireitaTrasIndefinido,
+        DiagonalEsquerdaTrasIndefinido,
     }
 }

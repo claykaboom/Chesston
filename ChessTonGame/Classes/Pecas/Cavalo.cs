@@ -8,7 +8,7 @@ namespace ChessTonGame.Classes.Pecas
     public class Cavalo : Peca
     {
         public Cavalo(CorElemento cor, Casa c)
-            : base(cor, c)
+            : base(cor, c,true)
         { }
         public override bool EstaEmXeque
         {

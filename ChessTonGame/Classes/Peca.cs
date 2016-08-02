@@ -10,11 +10,11 @@ namespace ChessTonGame.Classes
     {
 
 
-        public Peca(CorElemento cor, Casa casaAtual)
+        public Peca(CorElemento cor, Casa casaAtual, bool pulaOutrasPecas)
         {
             this._cor = cor;
             this._casaAtual = casaAtual;
-
+            this._pulaOutrasPecas = pulaOutrasPecas;
             this._tabuleiro = casaAtual.Tabuleiro;
 
             if (this._tabuleiro.BrancasEmbaixo)
@@ -56,6 +56,13 @@ namespace ChessTonGame.Classes
         private bool _perspectivaDeBaixo = false;
         public abstract bool EstaEmXeque { get; }
         public abstract decimal ValorPontos { get; }
+        private bool _pulaOutrasPecas;
+
+        public bool PulaOutrasPecas
+        {
+            get { return _pulaOutrasPecas; }
+            set { _pulaOutrasPecas = value; }
+        }
 
         public decimal Pontos
         {
@@ -96,187 +103,167 @@ namespace ChessTonGame.Classes
             get
             { return _jaMoveu; }
         }
+        private Casa getCasaByPasso(Casa casaAtualVerificacao, Passo passo)
+        {
+            if (this._perspectivaDeBaixo)
+            {
+                switch (passo)
+                {
+                    case Passo.Frente:
+                        return casaAtualVerificacao.CasaSuperior;
 
+                    case Passo.Tras:
+                        return casaAtualVerificacao.CasaInferior;
+                    case Passo.Direita:
+                        return casaAtualVerificacao.CasaDireita;
+                    case Passo.Esquerda:
+                        return casaAtualVerificacao.CasaEsquerda;
+
+                    /////DIAGONALS
+
+
+                    case Passo.DiagonalDireitaFrente:
+                        return casaAtualVerificacao.CasaSuperiorDireita;
+
+                    case Passo.DiagonalEsquerdaFrente:
+                        return casaAtualVerificacao.CasaSuperiorEsquerda;
+
+                    case Passo.DiagonalDireitaTras:
+                        return casaAtualVerificacao.CasaInferiorDireita;
+
+                    case Passo.DiagonalEsquerdaTras:
+                        return casaAtualVerificacao.CasaInferiorEsquerda;
+
+
+                }
+            }
+            else //outra perspectiva, tabuleiro virado para essa peça / another perspective, board turned for this piece
+            {
+                switch (passo)
+                {
+                    case Passo.Frente:
+                        return casaAtualVerificacao.CasaInferior;
+                    case Passo.Tras:
+                        return casaAtualVerificacao.CasaSuperior;
+                    case Passo.Direita:
+                        return casaAtualVerificacao.CasaEsquerda;
+                    case Passo.Esquerda:
+                        return casaAtualVerificacao.CasaDireita;
+                    /////DIAGONALS 
+                    case Passo.DiagonalDireitaFrente:
+                        return casaAtualVerificacao.CasaInferiorEsquerda;
+
+                    case Passo.DiagonalEsquerdaFrente:
+                        return casaAtualVerificacao.CasaInferiorDireita;
+
+                    case Passo.DiagonalDireitaTras:
+                        return casaAtualVerificacao.CasaSuperiorEsquerda;
+
+                    case Passo.DiagonalEsquerdaTras:
+                        return casaAtualVerificacao.CasaSuperiorDireita;
+
+                }
+
+            }
+            return null; //no previous case
+        }
         public List<Casa> getCasasPorRota()
         {
             List<Casa> returnTargets = new List<Casa>();
             foreach (var rota in this.getRotasPossiveis())
             {
-                if (this._perspectivaDeBaixo)
+                Casa casaAtualVerificacao = this.CasaAtual;
+                for (int i = 0; i < rota.Count; i++)
                 {
-                    Casa casaAtualVerificacao = this.CasaAtual;
-                    for (int i = 0; i < rota.Count; i++)
+                    Passo passo = rota[i];
+                    if (casaAtualVerificacao == null)
                     {
-                        Passo passo = rota[i];
-                        if (casaAtualVerificacao == null)
-                        {
-                            break;
-                        }
-                        switch (passo)
-                        {
-                            case Passo.Frente:
-                                casaAtualVerificacao = casaAtualVerificacao.CasaSuperior;
-                                //do not add now to the list
-                                break;
-                            case Passo.Tras:
-                                casaAtualVerificacao = casaAtualVerificacao.CasaInferior;
-                                //do not add now to the list
-                                break;
-                            case Passo.Direita:
-                                casaAtualVerificacao = casaAtualVerificacao.CasaDireita;
-                                //do not add now to the list
-                                break;
-                            case Passo.Esquerda:
-                                casaAtualVerificacao = casaAtualVerificacao.CasaEsquerda;
-                                //do not add now to the list
-                                break;
-                            case Passo.FrenteIndefinido:
-                                //get all places ahead
-                                while (casaAtualVerificacao != null)
-                                {
-                                    casaAtualVerificacao = casaAtualVerificacao.CasaSuperior;
-                                    if (casaAtualVerificacao != null)
-                                    {
-                                        returnTargets.Add(casaAtualVerificacao);
-                                    }
-                                }
-                                break;
-                            case Passo.TrasIndefinido:
-                                //get all places behind
-                                while (casaAtualVerificacao != null)
-                                {
-                                    casaAtualVerificacao = casaAtualVerificacao.CasaInferior;
-                                    if (casaAtualVerificacao != null)
-                                    {
-                                        returnTargets.Add(casaAtualVerificacao);
-                                    }
-                                }
-                                break;
-                            case Passo.DireitaIndefinido:
-                                //get all places to the right
-                                while (casaAtualVerificacao != null)
-                                {
-                                    casaAtualVerificacao = casaAtualVerificacao.CasaDireita;
-                                    if (casaAtualVerificacao != null)
-                                    {
-                                        returnTargets.Add(casaAtualVerificacao);
-                                    }
-                                }
-                                break;
-                            case Passo.EsquerdaIndefinido:
-                                //get all places to the right
-                                while (casaAtualVerificacao != null)
-                                {
-                                    casaAtualVerificacao = casaAtualVerificacao.CasaEsquerda;
-                                    if (casaAtualVerificacao != null)
-                                    {
-                                        returnTargets.Add(casaAtualVerificacao);
-                                    }
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                        if (i == rota.Count() - 1)
-                        {
-                            //adicionamos se nao foi nulo, pq nos casos de movimentos indefinidos, vai retornar nulo e eles ja foram adicionados na lista
-                            if (casaAtualVerificacao != null)
-                            {
-                                returnTargets.Add(casaAtualVerificacao);
-                            }
-                        }
-
+                        break;
                     }
-
-                }
-                else //outra perspectiva, tabuleiro virado para essa peça / another perspective, board turned for this piece
-                {
-
-                    Casa casaAtualVerificacao = this.CasaAtual;
-                    for (int i = 0; i < rota.Count; i++)
+                    switch (passo)
                     {
-                        Passo passo = rota[i];
-                        if (casaAtualVerificacao == null)
-                        {
+
+
+                        case Passo.FrenteIndefinido:
+                            //get all places ahead
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.Frente);
                             break;
-                        }
-                        switch (passo)
-                        {
-                            case Passo.Frente:
-                                casaAtualVerificacao = casaAtualVerificacao.CasaInferior;
-                                break;
-                            case Passo.Tras:
-                                casaAtualVerificacao = casaAtualVerificacao.CasaSuperior;
-                                break;
-                            case Passo.Direita:
-                                casaAtualVerificacao = casaAtualVerificacao.CasaEsquerda;
-                                break;
-                            case Passo.Esquerda:
-                                casaAtualVerificacao = casaAtualVerificacao.CasaDireita;
-                                break;
-                            case Passo.FrenteIndefinido:
-                                //get all places ahead
-                                while (casaAtualVerificacao != null)
-                                {
-                                    casaAtualVerificacao = casaAtualVerificacao.CasaInferior;
-                                    if (casaAtualVerificacao != null)
-                                    {
-                                        returnTargets.Add(casaAtualVerificacao);
-                                    }
-                                }
-                                break;
-                            case Passo.TrasIndefinido:
-                                //get all places behind
-                                while (casaAtualVerificacao != null)
-                                {
-                                    casaAtualVerificacao = casaAtualVerificacao.CasaSuperior;
-                                    if (casaAtualVerificacao != null)
-                                    {
-                                        returnTargets.Add(casaAtualVerificacao);
-                                    }
-                                }
-                                break;
-                            case Passo.DireitaIndefinido:
-                                //get all places to the left
-                                while (casaAtualVerificacao != null)
-                                {
-                                    casaAtualVerificacao = casaAtualVerificacao.CasaEsquerda;
-                                    if (casaAtualVerificacao != null)
-                                    {
-                                        returnTargets.Add(casaAtualVerificacao);
-                                    }
-                                }
-                                break;
-                            case Passo.EsquerdaIndefinido:
-                                //get all places to the right
-                                while (casaAtualVerificacao != null)
-                                {
-                                    casaAtualVerificacao = casaAtualVerificacao.CasaDireita;
-                                    if (casaAtualVerificacao != null)
-                                    {
-                                        returnTargets.Add(casaAtualVerificacao);
-                                    }
-                                }
-                                break;
-                            default:
-                                break;
-                        }
+                        case Passo.TrasIndefinido:
+                            //get all places behind 
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.Tras);
+                            break;
+                        case Passo.DireitaIndefinido:
+                            //get all places to the right
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.Direita);
+                            break;
+                        case Passo.EsquerdaIndefinido:
+                            //get all places to the right
 
-                        if (i == rota.Count() - 1)
-                        {
-                            //adicionamos se nao foi nulo, pq nos casos de movimentos indefinidos, vai retornar nulo e eles ja foram adicionados na lista
-                            if (casaAtualVerificacao != null)
-                            {
-                                returnTargets.Add(casaAtualVerificacao);
-                            }
-                        }
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.Esquerda);
+                            break;
+                        /////DIAGONALS 
 
+                        case Passo.DiagonalDireitaFrenteIndefinido:
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.DiagonalDireitaFrente);
+                            break;
+                        case Passo.DiagonalEsquerdaFrenteIndefinido:
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.DiagonalEsquerdaFrente);
+                            break;
+                        case Passo.DiagonalDireitaTrasIndefinido:
+
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.DiagonalDireitaTras);
+                            break;
+                        case Passo.DiagonalEsquerdaTrasIndefinido:
+
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.DiagonalEsquerdaTras);
+                            break;
+
+                        default:
+                            casaAtualVerificacao = getCasaByPasso(casaAtualVerificacao, passo);
+                            break;
                     }
-
+                    if (i == rota.Count() - 1)
+                    {
+                        //adicionamos se nao foi nulo, pq nos casos de movimentos indefinidos, vai retornar nulo e eles ja foram adicionados na lista
+                        if (casaAtualVerificacao != null)
+                        {
+                            returnTargets.Add(casaAtualVerificacao);
+                        }
+                    } 
                 }
+                 
             }
+
             return returnTargets.ToList().Distinct().ToList();
 
+        }
+
+
+        private Casa getCasasNaRota(List<Casa> returnTargets, Casa casaAtualVerificacao, Passo p)
+        {
+            while (casaAtualVerificacao != null)
+            {
+                casaAtualVerificacao = getCasaByPasso(casaAtualVerificacao, p);
+                if (casaAtualVerificacao != null)
+                {
+                    if (casaAtualVerificacao.PecaAtual != null
+                        && !this.PulaOutrasPecas) //só pode comer se for de cor diferente
+                    {
+                        if (casaAtualVerificacao.PecaAtual.Cor != this.Cor)
+                        {
+                            returnTargets.Add(casaAtualVerificacao);
+                        }
+                        casaAtualVerificacao = null;
+                        break;//we add and exit
+                    }
+                    else
+                    {
+                        returnTargets.Add(casaAtualVerificacao);
+                    }
+                }
+            }
+
+            return casaAtualVerificacao;
         }
 
         public bool PodeMoverPara(Casa casa)

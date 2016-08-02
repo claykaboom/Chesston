@@ -63,9 +63,29 @@ namespace ChessTonGame {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap blackBishop {
+            get {
+                object obj = ResourceManager.GetObject("blackBishop", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap blackKnight {
             get {
                 object obj = ResourceManager.GetObject("blackKnight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap whiteBishop {
+            get {
+                object obj = ResourceManager.GetObject("whiteBishop", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

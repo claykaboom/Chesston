@@ -39,6 +39,10 @@ namespace ChessTonGame
             p = new Cavalo(CorElemento.Preta, board.Casas[0][1]); 
             p = new Cavalo(CorElemento.Preta, board.Casas[0][6]);
 
+
+            p = new Bispo(CorElemento.Preta, board.Casas[0][2]);
+            p = new Bispo(CorElemento.Preta, board.Casas[0][5]);
+
             p = new Peao(CorElemento.Branca, board.Casas[6][0]);
             p = new Peao(CorElemento.Branca, board.Casas[6][1]);
             p = new Peao(CorElemento.Branca, board.Casas[6][2]);
@@ -51,6 +55,9 @@ namespace ChessTonGame
 
             p = new Cavalo(CorElemento.Branca, board.Casas[7][1]);
             p = new Cavalo(CorElemento.Branca, board.Casas[7][6]);
+
+            p = new Bispo(CorElemento.Branca, board.Casas[7][2]);
+            p = new Bispo(CorElemento.Branca, board.Casas[7][5]);
 
             pbBoard.Image = board.DesenhaTabuleiro();
         }
