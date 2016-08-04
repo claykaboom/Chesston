@@ -26,8 +26,8 @@ namespace ChessTonGame.Classes.Pecas
 
             rotas.Add(new List<Passo>() { Passo.FrenteIndefinido });
             rotas.Add(new List<Passo>() { Passo.TrasIndefinido });
-            rotas.Add(new List<Passo>() { Passo.FrenteIndefinido });
-            rotas.Add(new List<Passo>() { Passo.TrasIndefinido });
+            rotas.Add(new List<Passo>() { Passo.DireitaIndefinido });
+            rotas.Add(new List<Passo>() { Passo.EsquerdaIndefinido });
 
             return rotas;
         }
