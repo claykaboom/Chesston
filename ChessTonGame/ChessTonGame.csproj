@@ -52,6 +52,7 @@
     <Compile Include="Classes\IPeca.cs" />
     <Compile Include="Classes\Passo.cs" />
     <Compile Include="Classes\Peca.cs" />
+    <Compile Include="Classes\Pecas\Torre.cs" />
     <Compile Include="Classes\Pecas\Bispo.cs" />
     <Compile Include="Classes\Pecas\Cavalo.cs" />
     <Compile Include="Classes\Pecas\Peao.cs" />
