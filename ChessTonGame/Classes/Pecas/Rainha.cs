@@ -5,18 +5,17 @@ using System.Text;
 
 namespace ChessTonGame.Classes.Pecas
 {
-    public class Bispo : Peca
+    public class Rainha : Peca
     {
-        public Bispo()
+        public Rainha()
         { }
-        public Bispo(CorElemento cor, Casa c)
+        public Rainha(CorElemento cor, Casa c)
             : base(cor, c,false)
         { }
  
-
         public override decimal ValorPontos
         {
-            get { return 3; }
+            get { return 9; }
         }
 
         public override List<List<Passo>> getRotasPossiveis()
@@ -26,7 +25,13 @@ namespace ChessTonGame.Classes.Pecas
             rotas.Add(new List<Passo>() {Passo.DiagonalDireitaFrenteIndefinido  });
             rotas.Add(new List<Passo>() {Passo.DiagonalDireitaTrasIndefinido  });
             rotas.Add(new List<Passo>() {Passo.DiagonalEsquerdaFrenteIndefinido  });
-            rotas.Add(new List<Passo>() {Passo.DiagonalEsquerdaTrasIndefinido }); 
+            rotas.Add(new List<Passo>() {Passo.DiagonalEsquerdaTrasIndefinido });
+             
+            rotas.Add(new List<Passo>() { Passo.FrenteIndefinido });
+            rotas.Add(new List<Passo>() { Passo.TrasIndefinido });
+            rotas.Add(new List<Passo>() { Passo.DireitaIndefinido });
+            rotas.Add(new List<Passo>() { Passo.EsquerdaIndefinido });
+
 
             return rotas;
         }
@@ -35,11 +40,11 @@ namespace ChessTonGame.Classes.Pecas
         { 
             if (this.Cor == CorElemento.Branca)
             {
-                return Resources.whiteBishop;
+                return Resources.whiteQueen;
             }
             else
             {
-                return Resources.blackBishop;
+                return Resources.blackQueen;
             }
         }
          

@@ -6,9 +6,10 @@ using System.Drawing;
 
 namespace ChessTonGame.Classes
 {
-    public class Casa:IComparable<Casa>
+    public class Casa : IComparable<Casa>
     {
-
+        public Casa()
+        { }
         public Casa(CorElemento c, int numeroColuna, int numeroLinha, Tabuleiro tabuleiro)
         {
             this.cor = c;
@@ -21,9 +22,9 @@ namespace ChessTonGame.Classes
         private Casa _casaDireita;
         private Casa casaEsquerda;
         private Casa _casaSuperior;
-        private Casa casaInferior; 
+        private Casa casaInferior;
         private Tabuleiro tabuleiro;
-        private string nome;
+      //  private string nome;
         private CorElemento cor;
         private Peca pecaAtual;
 
@@ -50,7 +51,7 @@ namespace ChessTonGame.Classes
             }
         }
 
-        public int NumeroLinha
+        public int LineIndex
         {
             get
             {
@@ -58,7 +59,7 @@ namespace ChessTonGame.Classes
             }
         }
 
-        public int NumeroColuna
+        public int ColumnIndex
         {
             get
             {
@@ -85,20 +86,20 @@ namespace ChessTonGame.Classes
             {
                 if (this.cor == CorElemento.Branca)
                 {
-                    return Color.White;
+                    return Color.Moccasin;
                 }
-                return Color.Black;
+                return Color.LightGray;
 
             }
         }
 
-        public string Nome
-        {
-            get
-            {
-                return nome;
-            }
-        }
+        //public string Nome
+        //{
+        //    get
+        //    {
+        //        return nome;
+        //    }
+        //}
 
 
         public Casa CasaDireita
@@ -149,7 +150,11 @@ namespace ChessTonGame.Classes
             }
         }
 
+        public bool ehVezDaPecaNaCasa()
+        {
+            return (this.pecaAtual != null && tabuleiro.VezDaCor == this.pecaAtual.Cor);
 
+        }
         public Casa CasaSuperiorEsquerda
         {
             get
@@ -207,14 +212,14 @@ namespace ChessTonGame.Classes
             }
             return null;
         }
-  
+
         public int CompareTo(Casa other)
         {
-          if(other == this )
-          {
-              return 0;
-          }
-          return -1; //TODO: or +1 if there's need;
+            if (other == this)
+            {
+                return 0;
+            }
+            return -1; //TODO: or +1 if there's need;
         }
     }
 }

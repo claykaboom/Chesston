@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Xml.Serialization;
+using System.IO;
+using ChessTonGame.Classes.Pecas;
 
 namespace ChessTonGame.Classes
 {
@@ -15,6 +18,12 @@ namespace ChessTonGame.Classes
         private List<Casa> _todasCasas;
         private List<List<Casa>> _casas;
         private bool _brancasEmbaixo = true;
+        private bool _highlightCheckedPieces = true;
+        private ModoJogo _modoJogo = ModoJogo.AlternaTurnos;
+        private CorElemento _vezDaCor = CorElemento.Branca;
+
+        public Tabuleiro()
+        { }
         public List<List<Casa>> Casas
         {
             get
@@ -22,6 +31,9 @@ namespace ChessTonGame.Classes
                 return _casas;
             }
         }
+
+        public CorElemento VezDaCor
+        { get { return _vezDaCor; } }
         public bool BrancasEmbaixo
         {
             get
@@ -39,7 +51,7 @@ namespace ChessTonGame.Classes
             return (from casa in this._todasCasas where casa.PecaAtual != null select casa.PecaAtual).ToList();
         }
 
-        private Casa getCasa(int ixColuna, int ixLinha)
+        public Casa getCasa(int ixColuna, int ixLinha)
         {
             if (_casas.Count > 0 && ixLinha >= 0 && ixLinha <= _casas.Count - 1)
             {
@@ -60,10 +72,21 @@ namespace ChessTonGame.Classes
                 for (int ixColuna = 0; ixColuna < _casas[ixLinha].Count; ixColuna++)
                 {
                     Casa casa = _casas[ixLinha][ixColuna];
-                    g.FillRectangle(new SolidBrush(casa.Color), new Rectangle(casa.NumeroColuna * tamanhoCasa, casa.NumeroLinha * tamanhoCasa, tamanhoCasa, tamanhoCasa));
+                    g.FillRectangle(new SolidBrush(casa.Color), new Rectangle(casa.ColumnIndex * tamanhoCasa, casa.LineIndex * tamanhoCasa, tamanhoCasa, tamanhoCasa));
+
                     if (casa.PecaAtual != null)
                     {
-                        g.DrawImage(casa.PecaAtual.getImage(), casa.NumeroColuna * tamanhoCasa, casa.NumeroLinha * tamanhoCasa);
+                        if (this._highlightCheckedPieces && casa.PecaAtual.EstaEmXeque())
+                        {
+
+                            g.FillRectangle(new SolidBrush(Color.PaleVioletRed), new Rectangle(casa.ColumnIndex * tamanhoCasa, casa.LineIndex * tamanhoCasa, tamanhoCasa, tamanhoCasa));
+                        }
+                        if (casa.PecaAtual.EstaSelecionada)
+                        {
+                            g.FillRectangle(new SolidBrush(Color.PaleGreen), new Rectangle(casa.ColumnIndex * tamanhoCasa, casa.LineIndex * tamanhoCasa, tamanhoCasa, tamanhoCasa));
+
+                        }
+                        g.DrawImage(casa.PecaAtual.getImage(), casa.ColumnIndex * tamanhoCasa, casa.LineIndex * tamanhoCasa);
                     }
                 }
             }
@@ -94,13 +117,14 @@ namespace ChessTonGame.Classes
         }
 
 
-        public Tabuleiro(int colunas, int linhas, bool brancasEmBaixo)
+        public Tabuleiro(int colunas, int linhas, bool brancasEmBaixo, ModoJogo modoJogo)
         {
             bmp = new Bitmap(colunas * tamanhoCasa, linhas * tamanhoCasa);
             g = Graphics.FromImage(bmp);
             CorElemento cor = CorElemento.Branca;
             _casas = new List<List<Casa>>();
             _todasCasas = new List<Casa>();
+            _modoJogo = modoJogo;
             this._brancasEmbaixo = brancasEmBaixo;
             for (int ixLinha = 0; ixLinha < linhas; ixLinha++)
             {
@@ -190,11 +214,11 @@ namespace ChessTonGame.Classes
                     {
                         c.CasaDireita.CasaEsquerda = c;
                     }
-                     
+
 
                 }
 
- 
+
             }
 
 
@@ -208,18 +232,59 @@ namespace ChessTonGame.Classes
             Casa c = this.getCasa(xIndex, yIndex);
             if (this._pecaSelecionada == null)
             {
-                this._pecaSelecionada = c.SelecionarPeca();
+                if (c!=null && c.ehVezDaPecaNaCasa())
+                {
+                    this._pecaSelecionada = c.SelecionarPeca();
+                }
             }
             else
             {
-                this._pecaSelecionada.MoverPara(c); //TODO: verificar se pode aqui fora ou la dentro?
-
-                this._pecaSelecionada = null;
+                if (c != this._pecaSelecionada.CasaAtual && this._pecaSelecionada.PodeMoverPara(c))
+                {
+                    this._pecaSelecionada.MoverPara(c);
+                    if (this._modoJogo == ModoJogo.AlternaTurnos)
+                    {
+                        if (this.VezDaCor == CorElemento.Preta)
+                        {
+                            this._vezDaCor = CorElemento.Branca;
+                        }
+                        else
+                        {
+                            this._vezDaCor = CorElemento.Preta;
+                        }
+                    }
+                }
+                DeselecionarPecas();
             }
         }
         internal void DeselecionarPecas()
         {
             this.getTodasPecas().ForEach(a => a.Deselecionar());
+
+            this._pecaSelecionada = null;
+        }
+
+        public Tabuleiro getTabuleiroHipotetico()
+        {
+            XmlSerializer xmlSerializer = new XmlSerializer(this.GetType(),
+               new[] {
+                    typeof(Torre),
+                    typeof(Cavalo),
+                    typeof(Bispo),
+                    typeof(Rainha),
+                    typeof(Rei),
+                    typeof(Peao ),
+                    typeof(Casa),
+
+                    });
+
+            using (StringWriter textWriter = new StringWriter())
+            {
+                xmlSerializer.Serialize(textWriter, this);
+                String serializedBoard = textWriter.ToString();
+                StringReader textReader = new StringReader(serializedBoard);
+                return (Tabuleiro)xmlSerializer.Deserialize(textReader);
+            }
         }
     }
 }

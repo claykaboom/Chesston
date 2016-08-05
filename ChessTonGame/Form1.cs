@@ -13,7 +13,7 @@ namespace ChessTonGame
 {
     public partial class Form1 : Form
     {
-        Tabuleiro board = new Tabuleiro(8, 8, true);
+        Tabuleiro board = new Tabuleiro(8, 8, true, ModoJogo.AlternaTurnos);
         public Form1()
         {
             InitializeComponent();
@@ -43,6 +43,13 @@ namespace ChessTonGame
             p = new Bispo(CorElemento.Preta, board.Casas[0][2]);
             p = new Bispo(CorElemento.Preta, board.Casas[0][5]);
 
+            p = new Torre(CorElemento.Preta, board.Casas[0][0]);
+            p = new Torre(CorElemento.Preta, board.Casas[0][7]);
+
+            p = new Rei(CorElemento.Preta, board.Casas[0][4]);
+
+            p = new Rainha(CorElemento.Preta, board.Casas[0][3]);
+
             p = new Peao(CorElemento.Branca, board.Casas[6][0]);
             p = new Peao(CorElemento.Branca, board.Casas[6][1]);
             p = new Peao(CorElemento.Branca, board.Casas[6][2]);
@@ -58,6 +65,14 @@ namespace ChessTonGame
 
             p = new Bispo(CorElemento.Branca, board.Casas[7][2]);
             p = new Bispo(CorElemento.Branca, board.Casas[7][5]);
+
+
+            p = new Torre(CorElemento.Branca, board.Casas[7][0]);
+            p = new Torre(CorElemento.Branca, board.Casas[7][7]);
+
+            p = new Rainha(CorElemento.Branca, board.Casas[7][3]);
+            p = new Rei(CorElemento.Branca, board.Casas[7][4]);
+
 
             pbBoard.Image = board.DesenhaTabuleiro();
         }

@@ -7,13 +7,12 @@ namespace ChessTonGame.Classes.Pecas
 {
     public class Torre : Peca
     {
+        public Torre()
+        { }
         public Torre(CorElemento cor, Casa c)
             : base(cor, c, false)
         { }
-        public override bool EstaEmXeque
-        {
-            get { throw new NotImplementedException(); }
-        }
+ 
 
         public override decimal ValorPontos
         {
@@ -36,17 +35,13 @@ namespace ChessTonGame.Classes.Pecas
         {
             if (this.Cor == CorElemento.Branca)
             {
-                return Resources.whiteBishop;
+                return Resources.whiteRook;
             }
             else
             {
-                return Resources.blackBishop;
+                return Resources.blackRook;
             }
         }
-
-        public override bool FicaEmXequeNaCasa(Casa casa)
-        {
-            throw new NotImplementedException();
-        }
+         
     }
 }

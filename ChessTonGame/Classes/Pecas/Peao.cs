@@ -9,8 +9,10 @@ namespace ChessTonGame.Classes.Pecas
     public class Peao : Peca
     {
 
+        public Peao()
+        { }
         public Peao(CorElemento cor, Casa casa)
-            : base(cor, casa,false)
+            : base(cor, casa, false)
         {
         }
 
@@ -19,52 +21,93 @@ namespace ChessTonGame.Classes.Pecas
             get { return 1; }
         }
 
+
         public override List<List<Passo>> getRotasPossiveis()
         {
+            
+
             List<List<Passo>> rotas = new List<List<Passo>>();
             if (!this.JaMoveu)
             {
-                List<Passo> rota1 = new List<Passo>() { Passo.Frente, Passo.Frente };
-                rotas.Add(rota1);
+                List<Passo> rotaPrimeiroMovimento = new List<Passo>() { Passo.Frente, Passo.Frente };
+
+                var CasaFrentePrimeiroMovimento = this.getCasasPorPassos(rotaPrimeiroMovimento).FirstOrDefault();
+                //se não tem peca à frente , pode mover
+                if (CasaFrentePrimeiroMovimento != null && CasaFrentePrimeiroMovimento.PecaAtual == null)
+                {
+                    rotas.Add(rotaPrimeiroMovimento); 
+                }
+
             }
-            rotas.Add(new List<Passo>() { Passo.Frente });
+
+            var PassosComerDireita = new List<Passo>() { Passo.DiagonalDireitaFrente };
+            var PassosComerEsquerda = new List<Passo>() { Passo.DiagonalEsquerdaFrente };
+            var CasaDiagonal = this.getCasasPorPassos(PassosComerDireita).FirstOrDefault();
+
+            if (CasaDiagonal != null && CasaDiagonal.PecaAtual != null)
+            {
+                if (CasaDiagonal.PecaAtual.ehInimigaDe(this))
+                {
+                    rotas.Add(PassosComerDireita);
+
+                }
+            }
+
+            CasaDiagonal = this.getCasasPorPassos(PassosComerEsquerda).FirstOrDefault();
+
+            if (CasaDiagonal != null && CasaDiagonal.PecaAtual != null)
+            {
+                if (CasaDiagonal.PecaAtual.ehInimigaDe(this))
+                {
+                    rotas.Add(PassosComerEsquerda);
+
+                }
+            }
+
+            var movimentoGeral = new List<Passo>() { Passo.Frente };
+            var CasaFrente = this.getCasasPorPassos(movimentoGeral).FirstOrDefault();
+
+            //se não tem peca à frente , pode mover
+            if (CasaFrente != null && CasaFrente.PecaAtual == null)
+            {
+                rotas.Add(movimentoGeral);
+            } 
 
             return rotas;
         }
-
-
-        public override bool FicaEmXequeNaCasa(Casa casa)
-        {
-            throw new NotImplementedException();
-        }
+         
 
         public override System.Drawing.Image getImage()
         {
-            Graphics g;
-            Bitmap bmp = new Bitmap(this.getTamanhoPeca(), this.getTamanhoPeca());
-            g = Graphics.FromImage(bmp);
-            if (this.Cor == CorElemento.Preta)
+            //Graphics g;
+            //Bitmap bmp = new Bitmap(this.getTamanhoPeca(), this.getTamanhoPeca());
+            //g = Graphics.FromImage(bmp);
+            //if (this.Cor == CorElemento.Preta)
+            //{
+            //    g.FillEllipse(new SolidBrush(System.Drawing.Color.Black), 0, 0, this.getTamanhoPeca(), this.getTamanhoPeca());
+            //    g.DrawEllipse(new Pen(new SolidBrush(Color.White), 1), 0, 0, this.getTamanhoPeca(), this.getTamanhoPeca());
+            //}
+            //else
+            //{
+
+            //    g.FillEllipse(new SolidBrush(System.Drawing.Color.White), 0, 0, this.getTamanhoPeca(), this.getTamanhoPeca());
+            //    g.DrawEllipse(new Pen(new SolidBrush(Color.Black), 1), 0, 0, this.getTamanhoPeca(), this.getTamanhoPeca());
+            //}
+
+            //if (this.EstaSelecionada)
+            //{
+            //    g.DrawEllipse(new Pen(new SolidBrush(Color.Red), 2), 0, 0, this.getTamanhoPeca(), this.getTamanhoPeca());
+            //}
+            //return bmp;
+            if (this.Cor == CorElemento.Branca)
             {
-                g.FillEllipse(new SolidBrush(System.Drawing.Color.Black), 0, 0, this.getTamanhoPeca(), this.getTamanhoPeca());
-                g.DrawEllipse(new Pen(new SolidBrush(Color.White), 1), 0, 0, this.getTamanhoPeca(), this.getTamanhoPeca());
+                return Resources.whitePawn;
             }
             else
             {
-
-                g.FillEllipse(new SolidBrush(System.Drawing.Color.White), 0, 0, this.getTamanhoPeca(), this.getTamanhoPeca());
-                g.DrawEllipse(new Pen(new SolidBrush(Color.Black), 1), 0, 0, this.getTamanhoPeca(), this.getTamanhoPeca());
+                return Resources.blackPawn;
             }
-
-            if (this.EstaSelecionada)
-            {
-                g.DrawEllipse(new Pen(new SolidBrush(Color.Red), 2), 0, 0, this.getTamanhoPeca(), this.getTamanhoPeca());
-            }
-            return bmp;
         }
 
-        public override bool EstaEmXeque
-        {
-            get { throw new NotImplementedException(); }
-        }
     }
 }

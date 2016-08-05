@@ -9,7 +9,8 @@ namespace ChessTonGame.Classes
     public abstract class Peca
     {
 
-
+        public Peca()
+        { }
         public Peca(CorElemento cor, Casa casaAtual, bool pulaOutrasPecas)
         {
             this._cor = cor;
@@ -48,13 +49,17 @@ namespace ChessTonGame.Classes
 
         private Casa _casaAtual;
         private CorElemento _cor;
-        private Tabuleiro _tabuleiro;
+        protected Tabuleiro _tabuleiro;
         private List<Peca> _pecasComidas;
         private decimal _pontos = 0;
         private bool _estaSelecionada = false;
         private bool _jaMoveu = false;
         private bool _perspectivaDeBaixo = false;
-        public abstract bool EstaEmXeque { get; }
+        public bool EstaEmXeque()
+        {
+            return QuemDeuXeque().Count > 0;
+
+        }
         public abstract decimal ValorPontos { get; }
         private bool _pulaOutrasPecas;
 
@@ -103,6 +108,12 @@ namespace ChessTonGame.Classes
             get
             { return _jaMoveu; }
         }
+         
+        public bool ehInimigaDe(Peca p)
+        {
+            return p.Cor != this.Cor;
+        }
+
         private Casa getCasaByPasso(Casa casaAtualVerificacao, Passo passo)
         {
             if (this._perspectivaDeBaixo)
@@ -167,10 +178,23 @@ namespace ChessTonGame.Classes
             }
             return null; //no previous case
         }
-        public List<Casa> getCasasPorRota()
+
+        public List<Casa> getCasasPorPassos(List<Passo> passosPossiveis)
         {
+            return getCasasPorRota(new List<List<Passo>>() { passosPossiveis });
+        }
+
+
+        public  Casa  getCasaPorPassos(List<Passo> passosPossiveis)
+        {
+            return getCasasPorPassos(passosPossiveis).FirstOrDefault();
+        }
+
+        public List<Casa> getCasasPorRota(List<List<Passo>> rotasPossiveis)
+        {
+            
             List<Casa> returnTargets = new List<Casa>();
-            foreach (var rota in this.getRotasPossiveis())
+            foreach (var rota in rotasPossiveis)
             {
                 Casa casaAtualVerificacao = this.CasaAtual;
                 for (int i = 0; i < rota.Count; i++)
@@ -249,7 +273,7 @@ namespace ChessTonGame.Classes
                     if (casaAtualVerificacao.PecaAtual != null
                         && !this.PulaOutrasPecas) //só pode comer se for de cor diferente
                     {
-                        if (casaAtualVerificacao.PecaAtual.Cor != this.Cor)
+                        if (casaAtualVerificacao.PecaAtual.ehInimigaDe(this))
                         {
                             returnTargets.Add(casaAtualVerificacao);
                         }
@@ -272,7 +296,7 @@ namespace ChessTonGame.Classes
             {
                 return false;
             }
-            return ((from casaDestino in this.getCasasPorRota() where casaDestino == casa select casaDestino).FirstOrDefault() != null);
+            return ((from casaDestino in this.getCasasPorRota(this.getRotasPossiveis()) where casaDestino == casa select casaDestino).FirstOrDefault() != null);
         }
 
 
@@ -296,7 +320,24 @@ namespace ChessTonGame.Classes
                  ).ToList();
         }
 
-        public abstract bool FicaEmXequeNaCasa(Casa casa);
+        public bool FicaEmXequeNaCasa(Casa casa)
+        {
+            return false;
+            // para essa verificacao vou ter q ter uma nova instancia de tabuleiro, exatamente igual
+            var cloneBoard = this._tabuleiro.getTabuleiroHipotetico();
+            // faco operacoes hipoteticas ali
+            var minhaCasaReal = this.CasaAtual;
+            var minhaCasaHipotetica = cloneBoard.getCasa(minhaCasaReal.ColumnIndex, minhaCasaReal.LineIndex);
+            var casaHipoteticaDestino = cloneBoard.getCasa(casa.ColumnIndex, casa.LineIndex);
+            var minhaVersaoHipotetica = minhaCasaHipotetica.PecaAtual;
+            if (minhaVersaoHipotetica.PodeMoverPara(casaHipoteticaDestino))
+            {
+                minhaVersaoHipotetica.MoverPara(casaHipoteticaDestino);
+                return minhaVersaoHipotetica.EstaEmXeque();
+            }
+            return false;
+        }
+
         public bool FicaEmXequeSePecaEstiverNaCasa(Peca peca, Casa casa)
         {
             //este provavelmente vai ser um dos mais dificeis metodos de se construir
@@ -323,7 +364,7 @@ namespace ChessTonGame.Classes
         public List<Peca> PecasQuePodemSalvarDoXeque()
         {
             List<Peca> pecasSalvadoras = new List<Peca>();
-            if (this.EstaEmXeque)
+            if (this.EstaEmXeque())
             {
                 List<Peca> pecasAmigas = this._tabuleiro.PecasAmigasDe(this);
 
