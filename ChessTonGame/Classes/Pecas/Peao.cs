@@ -8,9 +8,7 @@ namespace ChessTonGame.Classes.Pecas
 {
     public class Peao : Peca
     {
-
-        public Peao()
-        { }
+         
         public Peao(CorElemento cor, Casa casa)
             : base(cor, casa, false)
         {

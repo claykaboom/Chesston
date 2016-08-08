@@ -6,9 +6,7 @@ using System.Text;
 namespace ChessTonGame.Classes.Pecas
 {
     public class Rei : Peca
-    {
-        public Rei()
-        { }
+    { 
         public Rei(CorElemento cor, Casa c)
             : base(cor, c, false)
         { }

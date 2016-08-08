@@ -51,6 +51,7 @@
     <Compile Include="Classes\Exceptions\MovimentoNaoPermitidoException.cs" />
     <Compile Include="Classes\IPeca.cs" />
     <Compile Include="Classes\ModoJogo.cs" />
+    <Compile Include="Classes\Movement.cs" />
     <Compile Include="Classes\Passo.cs" />
     <Compile Include="Classes\Peca.cs" />
     <Compile Include="Classes\Pecas\Rainha.cs" />

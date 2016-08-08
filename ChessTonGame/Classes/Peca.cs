@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChessTonGame.Classes.Pecas;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -6,18 +7,16 @@ using System.Text;
 
 namespace ChessTonGame.Classes
 {
-    public abstract class Peca
+    public abstract class Peca :ICloneable
     {
-
-        public Peca()
-        { }
+         
         public Peca(CorElemento cor, Casa casaAtual, bool pulaOutrasPecas)
         {
             this._cor = cor;
             this._casaAtual = casaAtual;
             this._pulaOutrasPecas = pulaOutrasPecas;
             this._tabuleiro = casaAtual.Tabuleiro;
-
+            this.UniqueId = Guid.NewGuid().ToString();
             if (this._tabuleiro.BrancasEmbaixo)
             {
                 if (cor == CorElemento.Branca)
@@ -47,6 +46,7 @@ namespace ChessTonGame.Classes
             }
         }
 
+        public string UniqueId { get; set; }
         private Casa _casaAtual;
         private CorElemento _cor;
         protected Tabuleiro _tabuleiro;
@@ -108,7 +108,7 @@ namespace ChessTonGame.Classes
             get
             { return _jaMoveu; }
         }
-         
+
         public bool ehInimigaDe(Peca p)
         {
             return p.Cor != this.Cor;
@@ -116,67 +116,85 @@ namespace ChessTonGame.Classes
 
         private Casa getCasaByPasso(Casa casaAtualVerificacao, Passo passo)
         {
+            Casa returningPosition = null;
             if (this._perspectivaDeBaixo)
             {
                 switch (passo)
                 {
                     case Passo.Frente:
-                        return casaAtualVerificacao.CasaSuperior;
+                        returningPosition = casaAtualVerificacao.CasaSuperior;
 
+                        break;
                     case Passo.Tras:
-                        return casaAtualVerificacao.CasaInferior;
+                        returningPosition = casaAtualVerificacao.CasaInferior;
+                        break;
                     case Passo.Direita:
-                        return casaAtualVerificacao.CasaDireita;
+                        returningPosition = casaAtualVerificacao.CasaDireita;
+                        break;
                     case Passo.Esquerda:
-                        return casaAtualVerificacao.CasaEsquerda;
+                        returningPosition = casaAtualVerificacao.CasaEsquerda;
+                        break;
 
                     /////DIAGONALS
 
 
                     case Passo.DiagonalDireitaFrente:
-                        return casaAtualVerificacao.CasaSuperiorDireita;
+                        returningPosition = casaAtualVerificacao.CasaSuperiorDireita;
 
+                        break;
                     case Passo.DiagonalEsquerdaFrente:
-                        return casaAtualVerificacao.CasaSuperiorEsquerda;
+                        returningPosition = casaAtualVerificacao.CasaSuperiorEsquerda;
 
+                        break;
                     case Passo.DiagonalDireitaTras:
-                        return casaAtualVerificacao.CasaInferiorDireita;
+                        returningPosition = casaAtualVerificacao.CasaInferiorDireita;
 
+                        break;
                     case Passo.DiagonalEsquerdaTras:
-                        return casaAtualVerificacao.CasaInferiorEsquerda;
-
+                        returningPosition = casaAtualVerificacao.CasaInferiorEsquerda;
+                        break;
 
                 }
+
             }
             else //outra perspectiva, tabuleiro virado para essa peça / another perspective, board turned for this piece
             {
                 switch (passo)
                 {
                     case Passo.Frente:
-                        return casaAtualVerificacao.CasaInferior;
+                        returningPosition = casaAtualVerificacao.CasaInferior;
+                        break;
                     case Passo.Tras:
-                        return casaAtualVerificacao.CasaSuperior;
+                        returningPosition = casaAtualVerificacao.CasaSuperior;
+                        break;
                     case Passo.Direita:
-                        return casaAtualVerificacao.CasaEsquerda;
+                        returningPosition = casaAtualVerificacao.CasaEsquerda;
+                        break;
                     case Passo.Esquerda:
-                        return casaAtualVerificacao.CasaDireita;
+                        returningPosition = casaAtualVerificacao.CasaDireita;
+                        break;
                     /////DIAGONALS 
                     case Passo.DiagonalDireitaFrente:
-                        return casaAtualVerificacao.CasaInferiorEsquerda;
-
+                        returningPosition = casaAtualVerificacao.CasaInferiorEsquerda;
+                        break;
                     case Passo.DiagonalEsquerdaFrente:
-                        return casaAtualVerificacao.CasaInferiorDireita;
-
+                        returningPosition = casaAtualVerificacao.CasaInferiorDireita;
+                        break;
                     case Passo.DiagonalDireitaTras:
-                        return casaAtualVerificacao.CasaSuperiorEsquerda;
-
+                        returningPosition = casaAtualVerificacao.CasaSuperiorEsquerda;
+                        break;
                     case Passo.DiagonalEsquerdaTras:
-                        return casaAtualVerificacao.CasaSuperiorDireita;
-
+                        returningPosition = casaAtualVerificacao.CasaSuperiorDireita;
+                        break;
                 }
 
             }
-            return null; //no previous case
+
+            if (returningPosition!= null && returningPosition.PecaAtual != null && !this.PulaOutrasPecas)
+            {
+                return null;
+            }
+            return returningPosition; //no previous case
         }
 
         public List<Casa> getCasasPorPassos(List<Passo> passosPossiveis)
@@ -185,14 +203,14 @@ namespace ChessTonGame.Classes
         }
 
 
-        public  Casa  getCasaPorPassos(List<Passo> passosPossiveis)
+        public Casa getCasaPorPassos(List<Passo> passosPossiveis)
         {
             return getCasasPorPassos(passosPossiveis).FirstOrDefault();
         }
 
         public List<Casa> getCasasPorRota(List<List<Passo>> rotasPossiveis)
         {
-            
+
             List<Casa> returnTargets = new List<Casa>();
             foreach (var rota in rotasPossiveis)
             {
@@ -253,9 +271,9 @@ namespace ChessTonGame.Classes
                         {
                             returnTargets.Add(casaAtualVerificacao);
                         }
-                    } 
+                    }
                 }
-                 
+
             }
 
             return returnTargets.ToList().Distinct().ToList();
@@ -313,7 +331,7 @@ namespace ChessTonGame.Classes
                     from
                         casa
                     in
-                        this._tabuleiro.TodasCasas
+                        this._tabuleiro.TodasCasas()
                     where
                         (this.PodeMoverPara(casa) == true)
                     select casa
@@ -322,6 +340,7 @@ namespace ChessTonGame.Classes
 
         public bool FicaEmXequeNaCasa(Casa casa)
         {
+    
             return false;
             // para essa verificacao vou ter q ter uma nova instancia de tabuleiro, exatamente igual
             var cloneBoard = this._tabuleiro.getTabuleiroHipotetico();
@@ -330,12 +349,11 @@ namespace ChessTonGame.Classes
             var minhaCasaHipotetica = cloneBoard.getCasa(minhaCasaReal.ColumnIndex, minhaCasaReal.LineIndex);
             var casaHipoteticaDestino = cloneBoard.getCasa(casa.ColumnIndex, casa.LineIndex);
             var minhaVersaoHipotetica = minhaCasaHipotetica.PecaAtual;
-            if (minhaVersaoHipotetica.PodeMoverPara(casaHipoteticaDestino))
+          //  if (!(this is Rei) && minhaVersaoHipotetica.PodeMoverPara(casaHipoteticaDestino))
             {
                 minhaVersaoHipotetica.MoverPara(casaHipoteticaDestino);
                 return minhaVersaoHipotetica.EstaEmXeque();
             }
-            return false;
         }
 
         public bool FicaEmXequeSePecaEstiverNaCasa(Peca peca, Casa casa)
@@ -344,17 +362,20 @@ namespace ChessTonGame.Classes
             return false;
         }
 
-        public void MoverPara(Casa casa)
+        public void MoverPara(Casa casaDestino)
         {
-            if (this.PodeMoverPara(casa))
+            if (this.PodeMoverPara(casaDestino))
             {
-                if (casa.PecaAtual != null) // está cheia
+                if (casaDestino.PecaAtual != null) // está cheia
                 {
-                    this.Comer(casa.PecaAtual);
+                    this.Comer(casaDestino.PecaAtual);
                 }
+
+                this._tabuleiro.Movimentos.Add(new Movement(this, this.CasaAtual, casaDestino));
+
                 this.CasaAtual.PecaAtual = null;
-                this._casaAtual = casa;
-                casa.PecaAtual = this;
+                this._casaAtual = casaDestino;
+                casaDestino.PecaAtual = this;
                 this._jaMoveu = true;
                 this._tabuleiro.DeselecionarPecas();
             }
@@ -388,6 +409,13 @@ namespace ChessTonGame.Classes
             this._pontos = p.ValorPontos;
             this._pecasComidas.Add(p);
         }
+
+        public object Clone()
+        {
+            var clone = (Peca)this.MemberwiseClone(); 
+            return clone;
+        }
+
 
         public Casa CasaAtual
         {

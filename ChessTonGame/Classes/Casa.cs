@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace ChessTonGame.Classes
 {
-    public class Casa : IComparable<Casa>
+    public class Casa : IComparable<Casa>, ICloneable
     {
         public Casa()
         { }
@@ -16,7 +16,13 @@ namespace ChessTonGame.Classes
             this.numeroColuna = numeroColuna;
             this.numeroLinha = numeroLinha;
             this.tabuleiro = tabuleiro;
+            this.UniqueId = Guid.NewGuid().ToString();
 
+        }
+
+        public void setContainingBoard(Tabuleiro t)
+        {
+            this.tabuleiro = t;
         }
 
         private Casa _casaDireita;
@@ -31,6 +37,7 @@ namespace ChessTonGame.Classes
         private int numeroLinha;
         private int numeroColuna;
 
+        public string UniqueId { get; set; }
         public Peca PecaAtual
         {
             get
@@ -220,6 +227,12 @@ namespace ChessTonGame.Classes
                 return 0;
             }
             return -1; //TODO: or +1 if there's need;
+        }
+
+        public object Clone()
+        {
+            var clone = (Casa)this.MemberwiseClone();
+            return clone;
         }
     }
 }

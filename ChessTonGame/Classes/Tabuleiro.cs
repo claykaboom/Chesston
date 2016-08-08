@@ -9,21 +9,20 @@ using ChessTonGame.Classes.Pecas;
 
 namespace ChessTonGame.Classes
 {
-    public class Tabuleiro
+    public class Tabuleiro : ICloneable
     {
         private Graphics g;
         internal int tamanhoCasa = 32;
         private Bitmap bmp;
         private Peca _pecaSelecionada = null;
-        private List<Casa> _todasCasas;
+        //private List<Casa> _todasCasas;
         private List<List<Casa>> _casas;
         private bool _brancasEmbaixo = true;
         private bool _highlightCheckedPieces = true;
         private ModoJogo _modoJogo = ModoJogo.AlternaTurnos;
         private CorElemento _vezDaCor = CorElemento.Branca;
 
-        public Tabuleiro()
-        { }
+        public string UniqueId { get; set; }
         public List<List<Casa>> Casas
         {
             get
@@ -41,14 +40,21 @@ namespace ChessTonGame.Classes
                 return _brancasEmbaixo;
             }
         }
-        public List<Casa> TodasCasas
+        public IEnumerable<Casa> TodasCasas()
         {
-            get { return _todasCasas; }
+            foreach (var listasPositions in _casas)
+            {
+                foreach (var position in listasPositions)
+                {
+                    yield return position;
+                }
+            }
+
         }
 
         public List<Peca> getTodasPecas()
         {
-            return (from casa in this._todasCasas where casa.PecaAtual != null select casa.PecaAtual).ToList();
+            return (from casa in this.TodasCasas() where casa.PecaAtual != null select casa.PecaAtual).ToList();
         }
 
         public Casa getCasa(int ixColuna, int ixLinha)
@@ -123,8 +129,11 @@ namespace ChessTonGame.Classes
             g = Graphics.FromImage(bmp);
             CorElemento cor = CorElemento.Branca;
             _casas = new List<List<Casa>>();
-            _todasCasas = new List<Casa>();
+
+            //    _todasCasas = new List<Casa>();
             _modoJogo = modoJogo;
+            this.UniqueId = Guid.NewGuid().ToString();
+
             this._brancasEmbaixo = brancasEmBaixo;
             for (int ixLinha = 0; ixLinha < linhas; ixLinha++)
             {
@@ -166,7 +175,7 @@ namespace ChessTonGame.Classes
                     //}
 
                     listaColunasNaLinha.Add(c);
-                    _todasCasas.Add(c);
+                    //  _todasCasas.Add(c);
 
                 }
 
@@ -232,7 +241,7 @@ namespace ChessTonGame.Classes
             Casa c = this.getCasa(xIndex, yIndex);
             if (this._pecaSelecionada == null)
             {
-                if (c!=null && c.ehVezDaPecaNaCasa())
+                if (c != null && c.ehVezDaPecaNaCasa())
                 {
                     this._pecaSelecionada = c.SelecionarPeca();
                 }
@@ -264,27 +273,48 @@ namespace ChessTonGame.Classes
             this._pecaSelecionada = null;
         }
 
+        public List<Movement> Movimentos { get; set; }
+
+        public void UndoLastMovement()
+        {
+            if
+
+        }
+
         public Tabuleiro getTabuleiroHipotetico()
         {
-            XmlSerializer xmlSerializer = new XmlSerializer(this.GetType(),
-               new[] {
-                    typeof(Torre),
-                    typeof(Cavalo),
-                    typeof(Bispo),
-                    typeof(Rainha),
-                    typeof(Rei),
-                    typeof(Peao ),
-                    typeof(Casa),
-
-                    });
-
-            using (StringWriter textWriter = new StringWriter())
+            Tabuleiro hipotetico = (Tabuleiro)this.Clone();
+            var todasCasas = hipotetico.TodasCasas().ToList();
+            foreach (var casa in todasCasas)
             {
-                xmlSerializer.Serialize(textWriter, this);
-                String serializedBoard = textWriter.ToString();
-                StringReader textReader = new StringReader(serializedBoard);
-                return (Tabuleiro)xmlSerializer.Deserialize(textReader);
+                Casa newCasa = (Casa)casa.Clone();
+                newCasa.setContainingBoard(this);
+                for (int j = 0; j < hipotetico.Casas.Count; j++)
+                {
+                    var listsPositions = hipotetico.Casas[j];
+                    for (int i = 0; i < listsPositions.Count; i++)
+                    {
+                        var position = listsPositions[i];
+                        if (position == casa)
+                        {
+                            listsPositions[i] = newCasa;
+                            if (newCasa.PecaAtual != null)
+                            {
+                                newCasa.PecaAtual = (Peca)newCasa.PecaAtual.Clone();
+                                newCasa.PecaAtual.CasaAtual = newCasa;
+                            }
+                        }
+                    }
+                }
             }
+
+            return hipotetico;
+        }
+
+        public object Clone()
+        {
+            var clone = (Tabuleiro)this.MemberwiseClone();
+            return clone;
         }
     }
 }
