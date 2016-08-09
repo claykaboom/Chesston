@@ -129,7 +129,7 @@ namespace ChessTonGame.Classes
             g = Graphics.FromImage(bmp);
             CorElemento cor = CorElemento.Branca;
             _casas = new List<List<Casa>>();
-
+            this.Movimentos = new List<Movement>();
             //    _todasCasas = new List<Casa>();
             _modoJogo = modoJogo;
             this.UniqueId = Guid.NewGuid().ToString();
@@ -277,7 +277,7 @@ namespace ChessTonGame.Classes
 
         public void UndoLastMovement()
         {
-            if
+            //if
 
         }
 
