@@ -8,9 +8,9 @@ using System.Text;
 
 namespace ChessTonGame.Classes
 {
-    public abstract class Peca :ICloneable
+    public abstract class Peca : ICloneable
     {
-         
+
         public Peca(CorElemento cor, Casa casaAtual, bool pulaOutrasPecas)
         {
             this._cor = cor;
@@ -52,7 +52,6 @@ namespace ChessTonGame.Classes
         private CorElemento _cor;
         protected Tabuleiro _tabuleiro;
         protected List<Peca> _pecasComidas;
-        private decimal _pontos = 0;
         private bool _estaSelecionada = false;
         private bool _jaMoveu = false;
         private bool _perspectivaDeBaixo = false;
@@ -70,12 +69,11 @@ namespace ChessTonGame.Classes
             set { _pulaOutrasPecas = value; }
         }
 
-        public decimal Pontos
+        public decimal getPontos()
         {
-            get
-            {
-                return _pontos;
-            }
+            if (this._pecasComidas == null)
+                return 0;
+            return this._pecasComidas.Sum(p => p.ValorPontos);
         }
 
         public bool EstaSelecionada
@@ -106,7 +104,7 @@ namespace ChessTonGame.Classes
         public event PieceMovedEventHandler PieceMoved;
 
         public bool JaMoveu()
-        { 
+        {
             return (from moves in _tabuleiro.Movimentos where moves.Peca == this select moves).Count() > 0;
         }
 
@@ -191,7 +189,7 @@ namespace ChessTonGame.Classes
 
             }
 
-            if (returningPosition!= null && returningPosition.PecaAtual != null && returningPosition.PecaAtual.Cor == this.Cor && !this.PulaOutrasPecas)
+            if (returningPosition != null && returningPosition.PecaAtual != null && returningPosition.PecaAtual.Cor == this.Cor && !this.PulaOutrasPecas)
             {
                 return null;
             }
@@ -341,26 +339,20 @@ namespace ChessTonGame.Classes
 
         public bool FicaEmXequeNaCasa(Casa casa)
         {
-    
-            return false;
-            // para essa verificacao vou ter q ter uma nova instancia de tabuleiro, exatamente igual
-            var cloneBoard = this._tabuleiro.getTabuleiroHipotetico();
-            // faco operacoes hipoteticas ali
-            var minhaCasaReal = this.CasaAtual;
-            var minhaCasaHipotetica = cloneBoard.getCasa(minhaCasaReal.ColumnIndex, minhaCasaReal.LineIndex);
-            var casaHipoteticaDestino = cloneBoard.getCasa(casa.ColumnIndex, casa.LineIndex);
-            var minhaVersaoHipotetica = minhaCasaHipotetica.PecaAtual;
-          //  if (!(this is Rei) && minhaVersaoHipotetica.PodeMoverPara(casaHipoteticaDestino))
-            {
-                minhaVersaoHipotetica.MoverPara(casaHipoteticaDestino);
-                return minhaVersaoHipotetica.EstaEmXeque();
-            }
-        }
 
-        public bool FicaEmXequeSePecaEstiverNaCasa(Peca peca, Casa casa)
-        {
-            //este provavelmente vai ser um dos mais dificeis metodos de se construir
             return false;
+            //  // para essa verificacao vou ter q ter uma nova instancia de tabuleiro, exatamente igual
+            //  var cloneBoard = this._tabuleiro.getTabuleiroHipotetico();
+            //  // faco operacoes hipoteticas ali
+            //  var minhaCasaReal = this.CasaAtual;
+            //  var minhaCasaHipotetica = cloneBoard.getCasa(minhaCasaReal.ColumnIndex, minhaCasaReal.LineIndex);
+            //  var casaHipoteticaDestino = cloneBoard.getCasa(casa.ColumnIndex, casa.LineIndex);
+            //  var minhaVersaoHipotetica = minhaCasaHipotetica.PecaAtual;
+            ////  if (!(this is Rei) && minhaVersaoHipotetica.PodeMoverPara(casaHipoteticaDestino))
+            //  {
+            //      minhaVersaoHipotetica.MoverPara(casaHipoteticaDestino);
+            //      return minhaVersaoHipotetica.EstaEmXeque();
+            //  }
         }
 
         public void MoverPara(Casa casaDestino)
@@ -372,7 +364,7 @@ namespace ChessTonGame.Classes
                     this.Comer(casaDestino.PecaAtual);
                 }
                 var m = new Movement(this, this.CasaAtual, casaDestino);
-            
+
                 this.CasaAtual.PecaAtual = null;
                 this._casaAtual = casaDestino;
                 casaDestino.PecaAtual = this;
@@ -398,8 +390,22 @@ namespace ChessTonGame.Classes
             List<Peca> pecasSalvadoras = new List<Peca>();
             if (this.EstaEmXeque())
             {
-                List<Peca> pecasAmigas = this._tabuleiro.PecasAmigasDe(this);
+                List<Peca> pecasAmigas = this._tabuleiro.PecasAmigasDe(this).OrderBy(p => p.ValorPontos).ToList(); // we try to protect the current piece first with the lowest value pieces
+                //lets perform every possible movement for every piece
+                foreach (var piece in pecasAmigas)
+                {
+                    //fazemos todos os possiveis movimentos
+                    foreach (var casa in piece.getCasasPossiveis())
+                    {
+                        piece.MoverPara(casa);
+                        if (!this.EstaEmXeque())
+                        {
+                            pecasSalvadoras.Add(piece);
+                            _tabuleiro.UndoLastMovement();
 
+                        }
+                    }
+                }
             }
 
             return pecasSalvadoras;
@@ -417,14 +423,22 @@ namespace ChessTonGame.Classes
         {
             if (_pecasComidas == null)
                 _pecasComidas = new List<Peca>();
-            this._pontos = p.ValorPontos;
             p.CasaAtual.PecaAtual = null;
             this._pecasComidas.Add(p);
         }
 
+        public void DevolverPecaComida(Peca p, Movement m)
+        {
+            if (_pecasComidas != null)
+            {
+                this._pecasComidas.Remove(p);
+            }
+            p.CasaAtual.PecaAtual = null;
+        }
+
         public object Clone()
         {
-            var clone = (Peca)this.MemberwiseClone(); 
+            var clone = (Peca)this.MemberwiseClone();
             return clone;
         }
 

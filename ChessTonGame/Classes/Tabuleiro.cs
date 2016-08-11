@@ -293,13 +293,15 @@ namespace ChessTonGame.Classes
             {
                 var lastMovement = this.Movimentos.LastOrDefault();
                 this.Movimentos?.Remove(lastMovement);
+                //returning moved piece to its origianl position
                 lastMovement.CasaOrigem.PecaAtual = lastMovement.Peca;
                 lastMovement.Peca.CasaAtual = lastMovement.CasaOrigem;
 
+                //returning captured pieces:
                 lastMovement.CasaDestino.PecaAtual = lastMovement.PecaAnterior;
                 if (lastMovement.PecaAnterior != null)
                 {
-                    lastMovement.PecaAnterior.CasaAtual = lastMovement.CasaDestino;
+                    lastMovement.PecaAnterior.CasaAtual = lastMovement.CasaDestino; 
                 }
 
                 if (this._modoJogo == ModoJogo.AlternaTurnos)
@@ -313,41 +315,43 @@ namespace ChessTonGame.Classes
                         this._vezDaCor = CorElemento.Preta;
                     }
                 }
+ 
+
                 MovementUndone?.Invoke(lastMovement);
 
             }
 
         }
 
-        public Tabuleiro getTabuleiroHipotetico()
-        {
-            Tabuleiro hipotetico = (Tabuleiro)this.Clone();
-            var todasCasas = hipotetico.TodasCasas().ToList();
-            foreach (var casa in todasCasas)
-            {
-                Casa newCasa = (Casa)casa.Clone();
-                newCasa.setContainingBoard(this);
-                for (int j = 0; j < hipotetico.Casas.Count; j++)
-                {
-                    var listsPositions = hipotetico.Casas[j];
-                    for (int i = 0; i < listsPositions.Count; i++)
-                    {
-                        var position = listsPositions[i];
-                        if (position == casa)
-                        {
-                            listsPositions[i] = newCasa;
-                            if (newCasa.PecaAtual != null)
-                            {
-                                newCasa.PecaAtual = (Peca)newCasa.PecaAtual.Clone();
-                                newCasa.PecaAtual.CasaAtual = newCasa;
-                            }
-                        }
-                    }
-                }
-            }
+        //public Tabuleiro getTabuleiroHipotetico()
+        //{
+        //    Tabuleiro hipotetico = (Tabuleiro)this.Clone();
+        //    var todasCasas = hipotetico.TodasCasas().ToList();
+        //    foreach (var casa in todasCasas)
+        //    {
+        //        Casa newCasa = (Casa)casa.Clone();
+        //        newCasa.setContainingBoard(this);
+        //        for (int j = 0; j < hipotetico.Casas.Count; j++)
+        //        {
+        //            var listsPositions = hipotetico.Casas[j];
+        //            for (int i = 0; i < listsPositions.Count; i++)
+        //            {
+        //                var position = listsPositions[i];
+        //                if (position == casa)
+        //                {
+        //                    listsPositions[i] = newCasa;
+        //                    if (newCasa.PecaAtual != null)
+        //                    {
+        //                        newCasa.PecaAtual = (Peca)newCasa.PecaAtual.Clone();
+        //                        newCasa.PecaAtual.CasaAtual = newCasa;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
 
-            return hipotetico;
-        }
+        //    return hipotetico;
+        //}
 
         public object Clone()
         {

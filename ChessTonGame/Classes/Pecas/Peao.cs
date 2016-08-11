@@ -126,7 +126,11 @@ namespace ChessTonGame.Classes.Pecas
 
             //se tem casa a direita , que é um peao inimigo:
             //deve ter sido o primeiro movimento do outro peao e nao pode ter mais nenhum movimento apos aquele
-            if (this.CasaAtual.CasaDireita != null && this.CasaAtual.CasaDireita.PecaAtual is Peao && this.CasaAtual.CasaDireita.PecaAtual.Cor != this.Cor && this.CasaAtual.CasaDireita.PecaAtual.getMovements().Count == 1 && _tabuleiro.Movimentos.IndexOf(this.CasaAtual.CasaDireita.PecaAtual.getMovements().First()) == _tabuleiro.Movimentos.Count - 1)
+            if (this.CasaAtual.CasaDireita != null 
+                && this.CasaAtual.CasaDireita.PecaAtual is Peao 
+                && this.CasaAtual.CasaDireita.PecaAtual.Cor != this.Cor
+                && this.CasaAtual.CasaDireita.PecaAtual.getMovements().Count == 1
+                && _tabuleiro.Movimentos.IndexOf(this.CasaAtual.CasaDireita.PecaAtual.getMovements().First()) == _tabuleiro.Movimentos.Count - 1)
             {
                 if (this.Cor == CorElemento.Branca)
                 {
@@ -163,7 +167,11 @@ namespace ChessTonGame.Classes.Pecas
                 }
 
             }
-            else if (this.CasaAtual.CasaEsquerda != null && this.CasaAtual.CasaEsquerda.PecaAtual is Peao && this.CasaAtual.CasaEsquerda.PecaAtual.Cor != this.Cor && this.CasaAtual.CasaEsquerda.PecaAtual.getMovements().Count == 1 && _tabuleiro.Movimentos.IndexOf(this.CasaAtual.CasaEsquerda.PecaAtual.getMovements().First()) == _tabuleiro.Movimentos.Count - 1)
+            else if (this.CasaAtual.CasaEsquerda != null
+                && this.CasaAtual.CasaEsquerda.PecaAtual is Peao
+                && this.CasaAtual.CasaEsquerda.PecaAtual.Cor != this.Cor
+                && this.CasaAtual.CasaEsquerda.PecaAtual.getMovements().Count == 1 
+                && _tabuleiro.Movimentos.IndexOf(this.CasaAtual.CasaEsquerda.PecaAtual.getMovements().First()) == _tabuleiro.Movimentos.Count - 1)
             {
                 if (this.Cor == CorElemento.Branca)
                 {
