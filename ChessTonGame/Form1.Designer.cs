@@ -30,15 +30,15 @@
         {
             this.pbBoard = new System.Windows.Forms.PictureBox();
             this.btnDesenhaTabuleiro = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbBoard)).BeginInit();
             this.SuspendLayout();
             // 
             // pbBoard
             // 
-            this.pbBoard.Location = new System.Drawing.Point(88, 27);
-            this.pbBoard.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pbBoard.Location = new System.Drawing.Point(66, 22);
             this.pbBoard.Name = "pbBoard";
-            this.pbBoard.Size = new System.Drawing.Size(641, 444);
+            this.pbBoard.Size = new System.Drawing.Size(481, 361);
             this.pbBoard.TabIndex = 0;
             this.pbBoard.TabStop = false;
             this.pbBoard.Click += new System.EventHandler(this.pbBoard_Click);
@@ -46,23 +46,32 @@
             // 
             // btnDesenhaTabuleiro
             // 
-            this.btnDesenhaTabuleiro.Location = new System.Drawing.Point(787, 27);
-            this.btnDesenhaTabuleiro.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnDesenhaTabuleiro.Location = new System.Drawing.Point(590, 22);
             this.btnDesenhaTabuleiro.Name = "btnDesenhaTabuleiro";
-            this.btnDesenhaTabuleiro.Size = new System.Drawing.Size(216, 28);
+            this.btnDesenhaTabuleiro.Size = new System.Drawing.Size(162, 23);
             this.btnDesenhaTabuleiro.TabIndex = 1;
             this.btnDesenhaTabuleiro.Text = "Desenha Tabuleiro";
             this.btnDesenhaTabuleiro.UseVisualStyleBackColor = true;
             this.btnDesenhaTabuleiro.Click += new System.EventHandler(this.btnDesenhaTabuleiro_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(603, 111);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "Undo";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1136, 594);
+            this.ClientSize = new System.Drawing.Size(852, 483);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.btnDesenhaTabuleiro);
             this.Controls.Add(this.pbBoard);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -75,6 +84,7 @@
 
         private System.Windows.Forms.PictureBox pbBoard;
         private System.Windows.Forms.Button btnDesenhaTabuleiro;
+        private System.Windows.Forms.Button button1;
     }
 }
 

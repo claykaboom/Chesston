@@ -6,11 +6,30 @@ using System.Text;
 namespace ChessTonGame.Classes.Pecas
 {
     public class Rei : Peca
-    { 
+    {
         public Rei(CorElemento cor, Casa c)
             : base(cor, c, false)
-        { }
+        {
+            this.PieceMoved += Rei_PieceMoved;
+            this._tabuleiro.PieceMoved += _tabuleiro_PieceMoved;
+        }
 
+        private void _tabuleiro_PieceMoved(Movement m)
+        {
+            if (m.Peca.Cor == this.Cor && this.EstaEmXeque())
+            { 
+                this._tabuleiro.UndoLastMovement();
+            }
+
+        }
+
+        private void Rei_PieceMoved(Movement m)
+        {
+            if (this.EstaEmXeque())
+            {
+            //    this._tabuleiro.UndoLastMovement(); 
+            }
+        }
 
         public override decimal ValorPontos
         {
@@ -75,10 +94,11 @@ namespace ChessTonGame.Classes.Pecas
             {
 
                 rotas.Add(new List<Passo>() { Passo.DiagonalEsquerdaTras });
-            } 
+            }
 
             return rotas;
         }
+
 
         public override System.Drawing.Image getImage()
         {

@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Xml.Serialization;
 using System.IO;
 using ChessTonGame.Classes.Pecas;
+using ChessTonGame.Classes.Events;
 
 namespace ChessTonGame.Classes
 {
@@ -129,7 +130,8 @@ namespace ChessTonGame.Classes
             g = Graphics.FromImage(bmp);
             CorElemento cor = CorElemento.Branca;
             _casas = new List<List<Casa>>();
-            this.Movimentos = new List<Movement>();
+            this.Movimentos = new Movements();
+            this.Movimentos.OnMovementAdded += Movimentos_OnAdd   ;
             //    _todasCasas = new List<Casa>();
             _modoJogo = modoJogo;
             this.UniqueId = Guid.NewGuid().ToString();
@@ -233,6 +235,14 @@ namespace ChessTonGame.Classes
 
         }
 
+        private void Movimentos_OnAdd(Movement m)
+        {
+            if (PieceMoved != null)
+            {
+                PieceMoved(m);
+            }
+        }
+
         public void Click(int x, int y)
         {
             //let us find the spot corresponding to the position;
@@ -273,11 +283,39 @@ namespace ChessTonGame.Classes
             this._pecaSelecionada = null;
         }
 
-        public List<Movement> Movimentos { get; set; }
+        public Movements Movimentos { get; set; }
+        public event PieceMovedEventHandler PieceMoved;
+        public event PieceMovedEventHandler MovementUndone;
 
         public void UndoLastMovement()
         {
-            //if
+            if (this.Movimentos != null && this.Movimentos.Count > 0)
+            {
+                var lastMovement = this.Movimentos.LastOrDefault();
+                this.Movimentos?.Remove(lastMovement);
+                lastMovement.CasaOrigem.PecaAtual = lastMovement.Peca;
+                lastMovement.Peca.CasaAtual = lastMovement.CasaOrigem;
+
+                lastMovement.CasaDestino.PecaAtual = lastMovement.PecaAnterior;
+                if (lastMovement.PecaAnterior != null)
+                {
+                    lastMovement.PecaAnterior.CasaAtual = lastMovement.CasaDestino;
+                }
+
+                if (this._modoJogo == ModoJogo.AlternaTurnos)
+                {
+                    if (this.VezDaCor == CorElemento.Preta)
+                    {
+                        this._vezDaCor = CorElemento.Branca;
+                    }
+                    else
+                    {
+                        this._vezDaCor = CorElemento.Preta;
+                    }
+                }
+                MovementUndone?.Invoke(lastMovement);
+
+            }
 
         }
 

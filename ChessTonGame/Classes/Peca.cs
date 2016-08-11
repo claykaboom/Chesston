@@ -1,4 +1,5 @@
-﻿using ChessTonGame.Classes.Pecas;
+﻿using ChessTonGame.Classes.Events;
+using ChessTonGame.Classes.Pecas;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -50,7 +51,7 @@ namespace ChessTonGame.Classes
         private Casa _casaAtual;
         private CorElemento _cor;
         protected Tabuleiro _tabuleiro;
-        private List<Peca> _pecasComidas;
+        protected List<Peca> _pecasComidas;
         private decimal _pontos = 0;
         private bool _estaSelecionada = false;
         private bool _jaMoveu = false;
@@ -102,11 +103,11 @@ namespace ChessTonGame.Classes
 
         public abstract List<List<Passo>> getRotasPossiveis();
 
+        public event PieceMovedEventHandler PieceMoved;
 
-        public bool JaMoveu
-        {
-            get
-            { return _jaMoveu; }
+        public bool JaMoveu()
+        { 
+            return (from moves in _tabuleiro.Movimentos where moves.Peca == this select moves).Count() > 0;
         }
 
         public bool ehInimigaDe(Peca p)
@@ -190,7 +191,7 @@ namespace ChessTonGame.Classes
 
             }
 
-            if (returningPosition!= null && returningPosition.PecaAtual != null && !this.PulaOutrasPecas)
+            if (returningPosition!= null && returningPosition.PecaAtual != null && returningPosition.PecaAtual.Cor == this.Cor && !this.PulaOutrasPecas)
             {
                 return null;
             }
@@ -370,16 +371,26 @@ namespace ChessTonGame.Classes
                 {
                     this.Comer(casaDestino.PecaAtual);
                 }
-
-                this._tabuleiro.Movimentos.Add(new Movement(this, this.CasaAtual, casaDestino));
-
+                var m = new Movement(this, this.CasaAtual, casaDestino);
+            
                 this.CasaAtual.PecaAtual = null;
                 this._casaAtual = casaDestino;
                 casaDestino.PecaAtual = this;
                 this._jaMoveu = true;
                 this._tabuleiro.DeselecionarPecas();
+
+                if (PieceMoved != null)
+                {
+                    PieceMoved(m);
+                }
+                this._tabuleiro.Movimentos.Add(m);
             }
 
+        }
+
+        public List<Movement> getMovements()
+        {
+            return this._tabuleiro.Movimentos.Where(m => m.Peca == this).ToList();
         }
 
         public List<Peca> PecasQuePodemSalvarDoXeque()
@@ -407,6 +418,7 @@ namespace ChessTonGame.Classes
             if (_pecasComidas == null)
                 _pecasComidas = new List<Peca>();
             this._pontos = p.ValorPontos;
+            p.CasaAtual.PecaAtual = null;
             this._pecasComidas.Add(p);
         }
 

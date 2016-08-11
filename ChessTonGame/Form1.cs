@@ -21,11 +21,6 @@ namespace ChessTonGame
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
-        }
-
-        private void btnDesenhaTabuleiro_Click(object sender, EventArgs e)
-        {
             Peca p = new Peao(CorElemento.Preta, board.Casas[1][0]);
             p = new Peao(CorElemento.Preta, board.Casas[1][1]);
             p = new Peao(CorElemento.Preta, board.Casas[1][2]);
@@ -36,7 +31,7 @@ namespace ChessTonGame
             p = new Peao(CorElemento.Preta, board.Casas[1][7]);
             p = new Peao(CorElemento.Preta, board.Casas[1][1]);
 
-            p = new Cavalo(CorElemento.Preta, board.Casas[0][1]); 
+            p = new Cavalo(CorElemento.Preta, board.Casas[0][1]);
             p = new Cavalo(CorElemento.Preta, board.Casas[0][6]);
 
 
@@ -77,6 +72,11 @@ namespace ChessTonGame
             pbBoard.Image = board.DesenhaTabuleiro();
         }
 
+        private void btnDesenhaTabuleiro_Click(object sender, EventArgs e)
+        {
+          
+        }
+
         private void pbBoard_Click(object sender, EventArgs e)
         {
 
@@ -85,6 +85,13 @@ namespace ChessTonGame
         private void pbBoard_MouseClick(object sender, MouseEventArgs e)
         {
             board.Click(e.X, e.Y);
+            pbBoard.Image = board.DesenhaTabuleiro();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            board.UndoLastMovement();
+
             pbBoard.Image = board.DesenhaTabuleiro();
         }
     }
