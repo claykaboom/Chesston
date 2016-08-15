@@ -10,7 +10,7 @@ using ChessTonGame.Classes.Events;
 
 namespace ChessTonGame.Classes
 {
-    public class Tabuleiro : ICloneable
+    public class Tabuleiro //: ICloneable
     {
         private Graphics g;
         internal int tamanhoCasa = 32;
@@ -41,6 +41,10 @@ namespace ChessTonGame.Classes
                 return _brancasEmbaixo;
             }
         }
+
+        public Peca PecaSelecionada
+        { get { return _pecaSelecionada; } }
+
         public IEnumerable<Casa> TodasCasas()
         {
             foreach (var listasPositions in _casas)
@@ -131,7 +135,7 @@ namespace ChessTonGame.Classes
             CorElemento cor = CorElemento.Branca;
             _casas = new List<List<Casa>>();
             this.Movimentos = new Movements();
-            this.Movimentos.OnMovementAdded += Movimentos_OnAdd   ;
+            this.Movimentos.OnMovementAdded += Movimentos_OnAdd;
             //    _todasCasas = new List<Casa>();
             _modoJogo = modoJogo;
             this.UniqueId = Guid.NewGuid().ToString();
@@ -301,7 +305,8 @@ namespace ChessTonGame.Classes
                 lastMovement.CasaDestino.PecaAtual = lastMovement.PecaAnterior;
                 if (lastMovement.PecaAnterior != null)
                 {
-                    lastMovement.PecaAnterior.CasaAtual = lastMovement.CasaDestino; 
+                    lastMovement.PecaAnterior.CasaAtual = lastMovement.CasaDestino;
+                    lastMovement.Peca.DevolverPecaComida(lastMovement.PecaAnterior);
                 }
 
                 if (this._modoJogo == ModoJogo.AlternaTurnos)
@@ -315,7 +320,7 @@ namespace ChessTonGame.Classes
                         this._vezDaCor = CorElemento.Preta;
                     }
                 }
- 
+
 
                 MovementUndone?.Invoke(lastMovement);
 
@@ -353,10 +358,10 @@ namespace ChessTonGame.Classes
         //    return hipotetico;
         //}
 
-        public object Clone()
-        {
-            var clone = (Tabuleiro)this.MemberwiseClone();
-            return clone;
-        }
+        //public object Clone()
+        //{
+        //    var clone = (Tabuleiro)this.MemberwiseClone();
+        //    return clone;
+        //}
     }
 }

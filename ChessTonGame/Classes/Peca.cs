@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ChessTonGame.Classes
 {
-    public abstract class Peca : ICloneable
+    public abstract class Peca //: ICloneable
     {
 
         public Peca(CorElemento cor, Casa casaAtual, bool pulaOutrasPecas)
@@ -359,17 +359,17 @@ namespace ChessTonGame.Classes
         {
             if (this.PodeMoverPara(casaDestino))
             {
+                var m = new Movement(this, this.CasaAtual, casaDestino);
                 if (casaDestino.PecaAtual != null) // está cheia
                 {
                     this.Comer(casaDestino.PecaAtual);
                 }
-                var m = new Movement(this, this.CasaAtual, casaDestino);
 
                 this.CasaAtual.PecaAtual = null;
                 this._casaAtual = casaDestino;
                 casaDestino.PecaAtual = this;
                 this._jaMoveu = true;
-                this._tabuleiro.DeselecionarPecas();
+
 
                 if (PieceMoved != null)
                 {
@@ -401,9 +401,9 @@ namespace ChessTonGame.Classes
                         if (!this.EstaEmXeque())
                         {
                             pecasSalvadoras.Add(piece);
-                            _tabuleiro.UndoLastMovement();
 
                         }
+                        _tabuleiro.UndoLastMovement();
                     }
                 }
             }
@@ -427,20 +427,20 @@ namespace ChessTonGame.Classes
             this._pecasComidas.Add(p);
         }
 
-        public void DevolverPecaComida(Peca p, Movement m)
+        public void DevolverPecaComida(Peca p)
         {
             if (_pecasComidas != null)
             {
                 this._pecasComidas.Remove(p);
             }
-            p.CasaAtual.PecaAtual = null;
+
         }
 
-        public object Clone()
-        {
-            var clone = (Peca)this.MemberwiseClone();
-            return clone;
-        }
+        //public object Clone()
+        //{
+        //    var clone = (Peca)this.MemberwiseClone();
+        //    return clone;
+        //}
 
 
         public Casa CasaAtual

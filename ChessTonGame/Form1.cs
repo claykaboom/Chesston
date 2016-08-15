@@ -11,10 +11,10 @@ using ChessTonGame.Classes.Pecas;
 
 namespace ChessTonGame
 {
-    public partial class Form1 : Form
+    public partial class ChessTon : Form
     {
         Tabuleiro board = new Tabuleiro(8, 8, true, ModoJogo.AlternaTurnos);
-        public Form1()
+        public ChessTon()
         {
             InitializeComponent();
         }
@@ -93,6 +93,11 @@ namespace ChessTonGame
             board.UndoLastMovement();
 
             pbBoard.Image = board.DesenhaTabuleiro();
+        }
+
+        private void btnSavingPieces_Click(object sender, EventArgs e)
+        {
+            var savingPieces = board.PecaSelecionada.PecasQuePodemSalvarDoXeque();
         }
     }
 }

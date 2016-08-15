@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace ChessTonGame.Classes
 {
-    public class Casa : IComparable<Casa>, ICloneable
+    public class Casa : IComparable<Casa>//, ICloneable
     {
         public Casa()
         { }
@@ -229,10 +229,10 @@ namespace ChessTonGame.Classes
             return -1; //TODO: or +1 if there's need;
         }
 
-        public object Clone()
-        {
-            var clone = (Casa)this.MemberwiseClone();
-            return clone;
-        }
+        //public object Clone()
+        //{
+        //    var clone = (Casa)this.MemberwiseClone();
+        //    return clone;
+        //}
     }
 }
