@@ -8,7 +8,7 @@ namespace ChessTonGame.Classes
     public class Movement
     {
 
-        public Movement(Peca p, Casa casaOrigem, Casa casaDestino)//, Passo passo)
+        public Movement(Piece p, Square casaOrigem, Square casaDestino)//, Passo passo)
         {
             this.CasaOrigem = casaOrigem;
             this.CasaDestino = casaDestino;
@@ -17,13 +17,13 @@ namespace ChessTonGame.Classes
             //   this.PassoDado = passo;
 
         }
-        public Casa CasaOrigem { get; private set; }
-        public Casa CasaDestino { get; private set; }
-        public Peca Peca { get; private set; }
-        public Peca PecaAnterior { get; private set; }
+        public Square CasaOrigem { get; private set; }
+        public Square CasaDestino { get; private set; }
+        public Piece Peca { get; private set; }
+        public Piece PecaAnterior { get; private set; }
         //     public Passo PassoDado { get; private set; }
         public object MovementInfo { get; private set; }
-        public void SetMovementInfo(Peca movementOwner, object info)
+        public void SetMovementInfo(Piece movementOwner, object info)
         {
             if (movementOwner == this.Peca)
             { this.MovementInfo = info; }

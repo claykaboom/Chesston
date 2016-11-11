@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ChessTonGame.Classes.Pecas
+namespace ChessTonGame.Classes.Pieces
 {
-    public class Rei : Peca
+    public class King : Piece
     {
-        public Rei(CorElemento cor, Casa c)
+        public King(ElementColor cor, Square c)
             : base(cor, c, false)
         {
             this.PieceMoved += Rei_PieceMoved;
@@ -36,64 +36,64 @@ namespace ChessTonGame.Classes.Pecas
             get { return 5; }
         }
 
-        public override List<List<Passo>> getRotasPossiveis()
+        public override List<List<Step>> getRotasPossiveis()
         {
-            List<List<Passo>> rotas = new List<List<Passo>>();
-            var casaTeste = getCasaPorPassos(new List<Passo>() { Passo.Frente });
+            List<List<Step>> rotas = new List<List<Step>>();
+            var casaTeste = getCasaPorPassos(new List<Step>() { Step.Front });
             if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
             {
 
-                rotas.Add(new List<Passo>() { Passo.Frente });
+                rotas.Add(new List<Step>() { Step.Front });
             }
-            casaTeste = getCasaPorPassos(new List<Passo>() { Passo.Tras });
+            casaTeste = getCasaPorPassos(new List<Step>() { Step.Back });
             if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
             {
 
-                rotas.Add(new List<Passo>() { Passo.Tras });
-            }
-
-            casaTeste = getCasaPorPassos(new List<Passo>() { Passo.Direita });
-            if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
-            {
-
-                rotas.Add(new List<Passo>() { Passo.Direita });
+                rotas.Add(new List<Step>() { Step.Back });
             }
 
-
-            casaTeste = getCasaPorPassos(new List<Passo>() { Passo.Esquerda });
+            casaTeste = getCasaPorPassos(new List<Step>() { Step.Right });
             if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
             {
 
-                rotas.Add(new List<Passo>() { Passo.Esquerda });
+                rotas.Add(new List<Step>() { Step.Right });
             }
 
 
-            casaTeste = getCasaPorPassos(new List<Passo>() { Passo.DiagonalDireitaFrente });
+            casaTeste = getCasaPorPassos(new List<Step>() { Step.Left });
             if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
             {
 
-                rotas.Add(new List<Passo>() { Passo.DiagonalDireitaFrente });
+                rotas.Add(new List<Step>() { Step.Left });
             }
 
-            casaTeste = getCasaPorPassos(new List<Passo>() { Passo.DiagonalDireitaFrente });
+
+            casaTeste = getCasaPorPassos(new List<Step>() { Step.DiagonalRightFront });
             if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
             {
 
-                rotas.Add(new List<Passo>() { Passo.DiagonalDireitaFrente });
+                rotas.Add(new List<Step>() { Step.DiagonalRightFront });
             }
 
-            casaTeste = getCasaPorPassos(new List<Passo>() { Passo.DiagonalDireitaTras });
+            casaTeste = getCasaPorPassos(new List<Step>() { Step.DiagonalRightFront });
             if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
             {
 
-                rotas.Add(new List<Passo>() { Passo.DiagonalDireitaTras });
+                rotas.Add(new List<Step>() { Step.DiagonalRightFront });
             }
 
-            casaTeste = getCasaPorPassos(new List<Passo>() { Passo.DiagonalEsquerdaTras });
+            casaTeste = getCasaPorPassos(new List<Step>() { Step.DiagonalRightBack });
             if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
             {
 
-                rotas.Add(new List<Passo>() { Passo.DiagonalEsquerdaTras });
+                rotas.Add(new List<Step>() { Step.DiagonalRightBack });
+            }
+
+            casaTeste = getCasaPorPassos(new List<Step>() { Step.DiagonalLeftBack });
+            if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
+            {
+
+                rotas.Add(new List<Step>() { Step.DiagonalLeftBack });
             }
 
             return rotas;
@@ -102,7 +102,7 @@ namespace ChessTonGame.Classes.Pecas
 
         public override System.Drawing.Image getImage()
         {
-            if (this.Cor == CorElemento.Branca)
+            if (this.Cor == ElementColor.Branca)
             {
                 return Resources.whiteKing;
             }

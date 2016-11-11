@@ -5,26 +5,26 @@ using System.Text;
 using System.Drawing;
 using System.Xml.Serialization;
 using System.IO;
-using ChessTonGame.Classes.Pecas;
+using ChessTonGame.Classes.Pieces;
 using ChessTonGame.Classes.Events;
 
 namespace ChessTonGame.Classes
 {
-    public class Tabuleiro //: ICloneable
+    public class Board //: ICloneable
     {
         private Graphics g;
         internal int tamanhoCasa = 32;
         private Bitmap bmp;
-        private Peca _pecaSelecionada = null;
+        private Piece _pecaSelecionada = null;
         //private List<Casa> _todasCasas;
-        private List<List<Casa>> _casas;
+        private List<List<Square>> _casas;
         private bool _brancasEmbaixo = true;
         private bool _highlightCheckedPieces = true;
-        private ModoJogo _modoJogo = ModoJogo.AlternaTurnos;
-        private CorElemento _vezDaCor = CorElemento.Branca;
+        private GameMode _modoJogo = GameMode.AlternaTurnos;
+        private ElementColor _vezDaCor = ElementColor.Branca;
 
         public string UniqueId { get; set; }
-        public List<List<Casa>> Casas
+        public List<List<Square>> Casas
         {
             get
             {
@@ -32,7 +32,7 @@ namespace ChessTonGame.Classes
             }
         }
 
-        public CorElemento VezDaCor
+        public ElementColor VezDaCor
         { get { return _vezDaCor; } }
         public bool BrancasEmbaixo
         {
@@ -42,10 +42,10 @@ namespace ChessTonGame.Classes
             }
         }
 
-        public Peca PecaSelecionada
+        public Piece PecaSelecionada
         { get { return _pecaSelecionada; } }
 
-        public IEnumerable<Casa> TodasCasas()
+        public IEnumerable<Square> TodasCasas()
         {
             foreach (var listasPositions in _casas)
             {
@@ -57,12 +57,12 @@ namespace ChessTonGame.Classes
 
         }
 
-        public List<Peca> getTodasPecas()
+        public List<Piece> getTodasPecas()
         {
             return (from casa in this.TodasCasas() where casa.PecaAtual != null select casa.PecaAtual).ToList();
         }
 
-        public Casa getCasa(int ixColuna, int ixLinha)
+        public Square getCasa(int ixColuna, int ixLinha)
         {
             if (_casas.Count > 0 && ixLinha >= 0 && ixLinha <= _casas.Count - 1)
             {
@@ -82,7 +82,7 @@ namespace ChessTonGame.Classes
             {
                 for (int ixColuna = 0; ixColuna < _casas[ixLinha].Count; ixColuna++)
                 {
-                    Casa casa = _casas[ixLinha][ixColuna];
+                    Square casa = _casas[ixLinha][ixColuna];
                     g.FillRectangle(new SolidBrush(casa.Color), new Rectangle(casa.ColumnIndex * tamanhoCasa, casa.LineIndex * tamanhoCasa, tamanhoCasa, tamanhoCasa));
 
                     if (casa.PecaAtual != null)
@@ -105,35 +105,35 @@ namespace ChessTonGame.Classes
             return bmp;
         }
 
-        public List<Peca> PecasInimigasDe(Peca p)
+        public List<Piece> PecasInimigasDe(Piece p)
         {
-            CorElemento cor = CorElemento.Preta;
-            if (p.Cor == CorElemento.Preta)
+            ElementColor cor = ElementColor.Preta;
+            if (p.Cor == ElementColor.Preta)
             {
-                cor = CorElemento.Branca;
+                cor = ElementColor.Branca;
             }
 
             return (from peca in this.getTodasPecas() where peca.Cor == cor select peca).ToList();
         }
 
-        public List<Peca> PecasAmigasDe(Peca p)
+        public List<Piece> PecasAmigasDe(Piece p)
         {
             //retorna todas as peças amigas diferentes da própria peça
             return (from peca in this.getTodasPecas() where peca.Cor == p.Cor && peca != p select peca).ToList();
         }
 
-        public void DeclaraXequeMate(CorElemento cor)
+        public void DeclaraXequeMate(ElementColor cor)
         {
             //disparar Evento de XequeMate para a cor informada
         }
 
 
-        public Tabuleiro(int colunas, int linhas, bool brancasEmBaixo, ModoJogo modoJogo)
+        public Board(int colunas, int linhas, bool brancasEmBaixo, GameMode modoJogo)
         {
             bmp = new Bitmap(colunas * tamanhoCasa, linhas * tamanhoCasa);
             g = Graphics.FromImage(bmp);
-            CorElemento cor = CorElemento.Branca;
-            _casas = new List<List<Casa>>();
+            ElementColor cor = ElementColor.Branca;
+            _casas = new List<List<Square>>();
             this.Movimentos = new Movements();
             this.Movimentos.OnMovementAdded += Movimentos_OnAdd;
             //    _todasCasas = new List<Casa>();
@@ -143,17 +143,17 @@ namespace ChessTonGame.Classes
             this._brancasEmbaixo = brancasEmBaixo;
             for (int ixLinha = 0; ixLinha < linhas; ixLinha++)
             {
-                List<Casa> listaColunasNaLinha = new List<Casa>();
+                List<Square> listaColunasNaLinha = new List<Square>();
                 for (int ixColuna = 0; ixColuna < colunas; ixColuna++)
                 {
-                    Casa c = new Casa(cor, ixColuna, ixLinha, this);
-                    if (cor == CorElemento.Branca)
+                    Square c = new Square(cor, ixColuna, ixLinha, this);
+                    if (cor == ElementColor.Branca)
                     {
-                        cor = CorElemento.Preta;
+                        cor = ElementColor.Preta;
                     }
                     else
                     {
-                        cor = CorElemento.Branca;
+                        cor = ElementColor.Branca;
                     }
 
                     //c.CasaSuperior = getCasa(ixColuna, ixLinha - 1);
@@ -187,25 +187,25 @@ namespace ChessTonGame.Classes
 
 
                 _casas.Add(listaColunasNaLinha);
-                if (cor == CorElemento.Preta)
+                if (cor == ElementColor.Preta)
                 {
-                    cor = new CorElemento();
-                    cor = CorElemento.Branca;
+                    cor = new ElementColor();
+                    cor = ElementColor.Branca;
                 }
                 else
                 {
-                    cor = new CorElemento();
-                    cor = CorElemento.Preta;
+                    cor = new ElementColor();
+                    cor = ElementColor.Preta;
                 }
 
             }
 
             for (int ixLinha = 0; ixLinha < linhas; ixLinha++)
             {
-                List<Casa> listaColunasNaLinha = new List<Casa>();
+                List<Square> listaColunasNaLinha = new List<Square>();
                 for (int ixColuna = 0; ixColuna < colunas; ixColuna++)
                 {
-                    Casa c = getCasa(ixColuna, ixLinha);
+                    Square c = getCasa(ixColuna, ixLinha);
                     c.CasaSuperior = getCasa(ixColuna, ixLinha - 1);
                     if (c.CasaSuperior != null)
                     {
@@ -252,7 +252,7 @@ namespace ChessTonGame.Classes
             //let us find the spot corresponding to the position;
             int xIndex = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(x / this.tamanhoCasa)));
             int yIndex = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(y / this.tamanhoCasa)));
-            Casa c = this.getCasa(xIndex, yIndex);
+            Square c = this.getCasa(xIndex, yIndex);
             if (this._pecaSelecionada == null)
             {
                 if (c != null && c.ehVezDaPecaNaCasa())
@@ -265,15 +265,15 @@ namespace ChessTonGame.Classes
                 if (c != this._pecaSelecionada.CasaAtual && this._pecaSelecionada.PodeMoverPara(c))
                 {
                     this._pecaSelecionada.MoverPara(c);
-                    if (this._modoJogo == ModoJogo.AlternaTurnos)
+                    if (this._modoJogo == GameMode.AlternaTurnos)
                     {
-                        if (this.VezDaCor == CorElemento.Preta)
+                        if (this.VezDaCor == ElementColor.Preta)
                         {
-                            this._vezDaCor = CorElemento.Branca;
+                            this._vezDaCor = ElementColor.Branca;
                         }
                         else
                         {
-                            this._vezDaCor = CorElemento.Preta;
+                            this._vezDaCor = ElementColor.Preta;
                         }
                     }
                 }
@@ -309,15 +309,15 @@ namespace ChessTonGame.Classes
                     lastMovement.Peca.DevolverPecaComida(lastMovement.PecaAnterior);
                 }
 
-                if (this._modoJogo == ModoJogo.AlternaTurnos)
+                if (this._modoJogo == GameMode.AlternaTurnos)
                 {
-                    if (this.VezDaCor == CorElemento.Preta)
+                    if (this.VezDaCor == ElementColor.Preta)
                     {
-                        this._vezDaCor = CorElemento.Branca;
+                        this._vezDaCor = ElementColor.Branca;
                     }
                     else
                     {
-                        this._vezDaCor = CorElemento.Preta;
+                        this._vezDaCor = ElementColor.Preta;
                     }
                 }
 

@@ -6,11 +6,11 @@ using System.Drawing;
 
 namespace ChessTonGame.Classes
 {
-    public class Casa : IComparable<Casa>//, ICloneable
+    public class Square : IComparable<Square>//, ICloneable
     {
-        public Casa()
+        public Square()
         { }
-        public Casa(CorElemento c, int numeroColuna, int numeroLinha, Tabuleiro tabuleiro)
+        public Square(ElementColor c, int numeroColuna, int numeroLinha, Board tabuleiro)
         {
             this.cor = c;
             this.numeroColuna = numeroColuna;
@@ -20,25 +20,25 @@ namespace ChessTonGame.Classes
 
         }
 
-        public void setContainingBoard(Tabuleiro t)
+        public void setContainingBoard(Board t)
         {
             this.tabuleiro = t;
         }
 
-        private Casa _casaDireita;
-        private Casa casaEsquerda;
-        private Casa _casaSuperior;
-        private Casa casaInferior;
-        private Tabuleiro tabuleiro;
+        private Square _casaDireita;
+        private Square casaEsquerda;
+        private Square _casaSuperior;
+        private Square casaInferior;
+        private Board tabuleiro;
       //  private string nome;
-        private CorElemento cor;
-        private Peca pecaAtual;
+        private ElementColor cor;
+        private Piece pecaAtual;
 
         private int numeroLinha;
         private int numeroColuna;
 
         public string UniqueId { get; set; }
-        public Peca PecaAtual
+        public Piece PecaAtual
         {
             get
             {
@@ -50,7 +50,7 @@ namespace ChessTonGame.Classes
             }
         }
 
-        public Tabuleiro Tabuleiro
+        public Board Tabuleiro
         {
             get
             {
@@ -75,7 +75,7 @@ namespace ChessTonGame.Classes
         }
 
 
-        public CorElemento Cor
+        public ElementColor Cor
         {
             get
             {
@@ -91,7 +91,7 @@ namespace ChessTonGame.Classes
         {
             get
             {
-                if (this.cor == CorElemento.Branca)
+                if (this.cor == ElementColor.Branca)
                 {
                     return Color.Moccasin;
                 }
@@ -109,7 +109,7 @@ namespace ChessTonGame.Classes
         //}
 
 
-        public Casa CasaDireita
+        public Square CasaDireita
         {
             get
             {
@@ -121,7 +121,7 @@ namespace ChessTonGame.Classes
             }
         }
 
-        public Casa CasaEsquerda
+        public Square CasaEsquerda
         {
             get
             {
@@ -133,7 +133,7 @@ namespace ChessTonGame.Classes
             }
         }
 
-        public Casa CasaSuperior
+        public Square CasaSuperior
         {
             get
             {
@@ -145,7 +145,7 @@ namespace ChessTonGame.Classes
             }
         }
 
-        public Casa CasaInferior
+        public Square CasaInferior
         {
             get
             {
@@ -162,7 +162,7 @@ namespace ChessTonGame.Classes
             return (this.pecaAtual != null && tabuleiro.VezDaCor == this.pecaAtual.Cor);
 
         }
-        public Casa CasaSuperiorEsquerda
+        public Square CasaSuperiorEsquerda
         {
             get
             {
@@ -173,7 +173,7 @@ namespace ChessTonGame.Classes
                 return null;
             }
         }
-        public Casa CasaSuperiorDireita
+        public Square CasaSuperiorDireita
         {
             get
             {
@@ -185,7 +185,7 @@ namespace ChessTonGame.Classes
                 return null;
             }
         }
-        public Casa CasaInferiorEsquerda
+        public Square CasaInferiorEsquerda
         {
             get
             {
@@ -196,7 +196,7 @@ namespace ChessTonGame.Classes
                 return null;
             }
         }
-        public Casa CasaInferiorDireita
+        public Square CasaInferiorDireita
         {
             get
             {
@@ -209,7 +209,7 @@ namespace ChessTonGame.Classes
             }
         }
 
-        internal Peca SelecionarPeca()
+        internal Piece SelecionarPeca()
         {
             this.tabuleiro.DeselecionarPecas();
             if (this.pecaAtual != null)
@@ -220,7 +220,7 @@ namespace ChessTonGame.Classes
             return null;
         }
 
-        public int CompareTo(Casa other)
+        public int CompareTo(Square other)
         {
             if (other == this)
             {

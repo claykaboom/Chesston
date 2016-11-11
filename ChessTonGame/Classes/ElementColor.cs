@@ -6,7 +6,7 @@ using System.Text;
 namespace ChessTonGame.Classes
 {
 
-    public enum CorElemento
+    public enum ElementColor
     {
         Branca = 1,
         Preta = 2

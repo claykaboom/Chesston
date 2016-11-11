@@ -4,12 +4,12 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
-namespace ChessTonGame.Classes.Pecas
+namespace ChessTonGame.Classes.Pieces
 {
-    public class Peao : Peca
+    public class Pawn : Piece
     {
 
-        public Peao(CorElemento cor, Casa casa)
+        public Pawn(ElementColor cor, Square casa)
             : base(cor, casa, false)
         {
             this.PieceMoved += Peao_PieceMoved;
@@ -18,10 +18,10 @@ namespace ChessTonGame.Classes.Pecas
 
         private void _tabuleiro_MovementUndone(Movement m)
         {
-            Tuple<string, Casa, Peca> mInfo = null;
+            Tuple<string, Square, Piece> mInfo = null;
             if (m.MovementInfo != null)
             {
-                mInfo = (Tuple<string, Casa, Peca>)m.MovementInfo;
+                mInfo = (Tuple<string, Square, Piece>)m.MovementInfo;
 
             }
             if (m.Peca == this && mInfo != null && mInfo.Item1 == "en pasant")
@@ -34,8 +34,8 @@ namespace ChessTonGame.Classes.Pecas
         private void Peao_PieceMoved(Movement m)
         {
 
-            var casaDiagonalEsquerdaTras = this.getCasaPorPassos(new List<Passo> { Passo.DiagonalEsquerdaTras });
-            var casaDiagonalDireitaTras = this.getCasaPorPassos(new List<Passo> { Passo.DiagonalDireitaTras });
+            var casaDiagonalEsquerdaTras = this.getCasaPorPassos(new List<Step> { Step.DiagonalLeftBack });
+            var casaDiagonalDireitaTras = this.getCasaPorPassos(new List<Step> { Step.DiagonalRightBack });
 
             if (m.PecaAnterior == null)
             {
@@ -43,13 +43,13 @@ namespace ChessTonGame.Classes.Pecas
 
                 if (m.CasaOrigem == casaDiagonalEsquerdaTras || m.CasaOrigem == casaDiagonalDireitaTras)
                 {
-                    if (this.Cor == CorElemento.Branca)
+                    if (this.Cor == ElementColor.Branca)
                     {
                         if (this._tabuleiro.BrancasEmbaixo)
                         {
                             if (this.CasaAtual.CasaInferior!=null && this.CasaAtual.CasaInferior.PecaAtual != null && this.CasaAtual.CasaInferior.PecaAtual.getMovements().Count == 1 && _tabuleiro.Movimentos.IndexOf(this.CasaAtual.CasaInferior.PecaAtual.getMovements().First()) == _tabuleiro.Movimentos.Count - 1)
                             {
-                                m.SetMovementInfo(this, Tuple.Create<string, Casa, Peca>("en pasant", this.CasaAtual.CasaInferior, this.CasaAtual.CasaInferior.PecaAtual));
+                                m.SetMovementInfo(this, Tuple.Create<string, Square, Piece>("en pasant", this.CasaAtual.CasaInferior, this.CasaAtual.CasaInferior.PecaAtual));
 
                                 this.Comer(this.CasaAtual.CasaInferior.PecaAtual);
 
@@ -63,7 +63,7 @@ namespace ChessTonGame.Classes.Pecas
                         {
                             if (this.CasaAtual.CasaSuperior != null && this.CasaAtual.CasaSuperior.PecaAtual != null && this.CasaAtual.CasaSuperior.PecaAtual.getMovements().Count == 1 && _tabuleiro.Movimentos.IndexOf(this.CasaAtual.CasaSuperior.PecaAtual.getMovements().First()) == _tabuleiro.Movimentos.Count - 1)
                             {
-                                m.SetMovementInfo(this, Tuple.Create<string, Casa, Peca>("en pasant", this.CasaAtual.CasaSuperior, this.CasaAtual.CasaSuperior.PecaAtual));
+                                m.SetMovementInfo(this, Tuple.Create<string, Square, Piece>("en pasant", this.CasaAtual.CasaSuperior, this.CasaAtual.CasaSuperior.PecaAtual));
                                 this.Comer(this.CasaAtual.CasaSuperior.PecaAtual);
 
                             }
@@ -77,7 +77,7 @@ namespace ChessTonGame.Classes.Pecas
                         {
                             if (this.CasaAtual.CasaSuperior != null && this.CasaAtual.CasaSuperior.PecaAtual != null && this.CasaAtual.CasaSuperior.PecaAtual.getMovements().Count == 1 && _tabuleiro.Movimentos.IndexOf(this.CasaAtual.CasaSuperior.PecaAtual.getMovements().First()) == _tabuleiro.Movimentos.Count - 1)
                             {
-                                m.SetMovementInfo(this, Tuple.Create<string, Casa, Peca>("en pasant", this.CasaAtual.CasaSuperior, this.CasaAtual.CasaSuperior.PecaAtual));
+                                m.SetMovementInfo(this, Tuple.Create<string, Square, Piece>("en pasant", this.CasaAtual.CasaSuperior, this.CasaAtual.CasaSuperior.PecaAtual));
                                 this.Comer(this.CasaAtual.CasaSuperior.PecaAtual);
                             }
                         }
@@ -85,7 +85,7 @@ namespace ChessTonGame.Classes.Pecas
                         {
                             if (this.CasaAtual.CasaInferior != null && this.CasaAtual.CasaInferior.PecaAtual != null && this.CasaAtual.CasaInferior.PecaAtual.getMovements().Count == 1 && _tabuleiro.Movimentos.IndexOf(this.CasaAtual.CasaInferior.PecaAtual.getMovements().First()) == _tabuleiro.Movimentos.Count - 1)
                             {
-                                m.SetMovementInfo(this, Tuple.Create<string, Casa, Peca>("en pasant", this.CasaAtual.CasaInferior, this.CasaAtual.CasaInferior.PecaAtual));
+                                m.SetMovementInfo(this, Tuple.Create<string, Square, Piece>("en pasant", this.CasaAtual.CasaInferior, this.CasaAtual.CasaInferior.PecaAtual));
                                 this.Comer(this.CasaAtual.CasaInferior.PecaAtual);
                             }
                         }
@@ -104,14 +104,14 @@ namespace ChessTonGame.Classes.Pecas
         }
 
 
-        public override List<List<Passo>> getRotasPossiveis()
+        public override List<List<Step>> getRotasPossiveis()
         {
 
 
-            List<List<Passo>> rotas = new List<List<Passo>>();
+            List<List<Step>> rotas = new List<List<Step>>();
             if (!this.JaMoveu())
             {
-                List<Passo> rotaPrimeiroMovimento = new List<Passo>() { Passo.Frente, Passo.Frente };
+                List<Step> rotaPrimeiroMovimento = new List<Step>() { Step.Front, Step.Front };
 
                 var CasaFrentePrimeiroMovimento = this.getCasasPorPassos(rotaPrimeiroMovimento).FirstOrDefault();
                 //se não tem peca à frente , pode mover
@@ -127,23 +127,23 @@ namespace ChessTonGame.Classes.Pecas
             //se tem casa a direita , que é um peao inimigo:
             //deve ter sido o primeiro movimento do outro peao e nao pode ter mais nenhum movimento apos aquele
             if (this.CasaAtual.CasaDireita != null 
-                && this.CasaAtual.CasaDireita.PecaAtual is Peao 
+                && this.CasaAtual.CasaDireita.PecaAtual is Pawn 
                 && this.CasaAtual.CasaDireita.PecaAtual.Cor != this.Cor
                 && this.CasaAtual.CasaDireita.PecaAtual.getMovements().Count == 1
                 && _tabuleiro.Movimentos.IndexOf(this.CasaAtual.CasaDireita.PecaAtual.getMovements().First()) == _tabuleiro.Movimentos.Count - 1)
             {
-                if (this.Cor == CorElemento.Branca)
+                if (this.Cor == ElementColor.Branca)
                 {
                     if (this._tabuleiro.BrancasEmbaixo)
                     {
-                        List<Passo> rotaEnPasant = new List<Passo>() { Passo.DiagonalDireitaFrente };
+                        List<Step> rotaEnPasant = new List<Step>() { Step.DiagonalRightFront };
 
                         rotas.Add(rotaEnPasant);
                     }
                     else
                     {
 
-                        List<Passo> rotaEnPasant = new List<Passo>() { Passo.DiagonalEsquerdaFrente };
+                        List<Step> rotaEnPasant = new List<Step>() { Step.DiagonalLeftFront };
 
                         rotas.Add(rotaEnPasant);
                     }
@@ -153,14 +153,14 @@ namespace ChessTonGame.Classes.Pecas
 
                     if (this._tabuleiro.BrancasEmbaixo)
                     {
-                        List<Passo> rotaEnPasant = new List<Passo>() { Passo.DiagonalEsquerdaFrente };
+                        List<Step> rotaEnPasant = new List<Step>() { Step.DiagonalLeftFront };
 
                         rotas.Add(rotaEnPasant);
                     }
                     else
                     {
 
-                        List<Passo> rotaEnPasant = new List<Passo>() { Passo.DiagonalDireitaFrente };
+                        List<Step> rotaEnPasant = new List<Step>() { Step.DiagonalRightFront };
 
                         rotas.Add(rotaEnPasant);
                     }
@@ -168,23 +168,23 @@ namespace ChessTonGame.Classes.Pecas
 
             }
             else if (this.CasaAtual.CasaEsquerda != null
-                && this.CasaAtual.CasaEsquerda.PecaAtual is Peao
+                && this.CasaAtual.CasaEsquerda.PecaAtual is Pawn
                 && this.CasaAtual.CasaEsquerda.PecaAtual.Cor != this.Cor
                 && this.CasaAtual.CasaEsquerda.PecaAtual.getMovements().Count == 1 
                 && _tabuleiro.Movimentos.IndexOf(this.CasaAtual.CasaEsquerda.PecaAtual.getMovements().First()) == _tabuleiro.Movimentos.Count - 1)
             {
-                if (this.Cor == CorElemento.Branca)
+                if (this.Cor == ElementColor.Branca)
                 {
                     if (this._tabuleiro.BrancasEmbaixo)
                     {
-                        List<Passo> rotaEnPasant = new List<Passo>() { Passo.DiagonalEsquerdaFrente };
+                        List<Step> rotaEnPasant = new List<Step>() { Step.DiagonalLeftFront };
 
                         rotas.Add(rotaEnPasant);
                     }
                     else
                     {
 
-                        List<Passo> rotaEnPasant = new List<Passo>() { Passo.DiagonalDireitaFrente };
+                        List<Step> rotaEnPasant = new List<Step>() { Step.DiagonalRightFront };
 
                         rotas.Add(rotaEnPasant);
                     }
@@ -194,14 +194,14 @@ namespace ChessTonGame.Classes.Pecas
 
                     if (this._tabuleiro.BrancasEmbaixo)
                     {
-                        List<Passo> rotaEnPasant = new List<Passo>() { Passo.DiagonalDireitaFrente };
+                        List<Step> rotaEnPasant = new List<Step>() { Step.DiagonalRightFront };
 
                         rotas.Add(rotaEnPasant);
                     }
                     else
                     {
 
-                        List<Passo> rotaEnPasant = new List<Passo>() { Passo.DiagonalEsquerdaFrente };
+                        List<Step> rotaEnPasant = new List<Step>() { Step.DiagonalLeftFront };
 
                         rotas.Add(rotaEnPasant);
                     }
@@ -209,8 +209,8 @@ namespace ChessTonGame.Classes.Pecas
 
             }
             //fim en pasant
-            var PassosComerDireita = new List<Passo>() { Passo.DiagonalDireitaFrente };
-            var PassosComerEsquerda = new List<Passo>() { Passo.DiagonalEsquerdaFrente };
+            var PassosComerDireita = new List<Step>() { Step.DiagonalRightFront };
+            var PassosComerEsquerda = new List<Step>() { Step.DiagonalLeftFront };
             var CasaDiagonal = this.getCasasPorPassos(PassosComerDireita).FirstOrDefault();
 
             if (CasaDiagonal != null && CasaDiagonal.PecaAtual != null)
@@ -233,7 +233,7 @@ namespace ChessTonGame.Classes.Pecas
                 }
             }
 
-            var movimentoGeral = new List<Passo>() { Passo.Frente };
+            var movimentoGeral = new List<Step>() { Step.Front };
             var CasaFrente = this.getCasasPorPassos(movimentoGeral).FirstOrDefault();
 
             //se não tem peca à frente , pode mover
@@ -268,7 +268,7 @@ namespace ChessTonGame.Classes.Pecas
             //    g.DrawEllipse(new Pen(new SolidBrush(Color.Red), 2), 0, 0, this.getTamanhoPeca(), this.getTamanhoPeca());
             //}
             //return bmp;
-            if (this.Cor == CorElemento.Branca)
+            if (this.Cor == ElementColor.Branca)
             {
                 return Resources.whitePawn;
             }

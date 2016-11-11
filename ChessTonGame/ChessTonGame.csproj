@@ -46,23 +46,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\Casa.cs" />
-    <Compile Include="Classes\CorElemento.cs" />
+    <Compile Include="Classes\Square.cs" />
+    <Compile Include="Classes\ElementColor.cs" />
     <Compile Include="Classes\Events\PieceMovedEventHandler.cs" />
-    <Compile Include="Classes\Exceptions\MovimentoNaoPermitidoException.cs" />
-    <Compile Include="Classes\IPeca.cs" />
-    <Compile Include="Classes\ModoJogo.cs" />
+    <Compile Include="Classes\Exceptions\NowAllowedMovementException.cs" />
+    <Compile Include="Classes\IPiece.cs" />
+    <Compile Include="Classes\GameMode.cs" />
     <Compile Include="Classes\Movement.cs" />
     <Compile Include="Classes\Movements.cs" />
-    <Compile Include="Classes\Passo.cs" />
-    <Compile Include="Classes\Peca.cs" />
-    <Compile Include="Classes\Pecas\Rainha.cs" />
-    <Compile Include="Classes\Pecas\Rei.cs" />
-    <Compile Include="Classes\Pecas\Torre.cs" />
-    <Compile Include="Classes\Pecas\Bispo.cs" />
-    <Compile Include="Classes\Pecas\Cavalo.cs" />
-    <Compile Include="Classes\Pecas\Peao.cs" />
-    <Compile Include="Classes\Tabuleiro.cs" />
+    <Compile Include="Classes\Step.cs" />
+    <Compile Include="Classes\Piece.cs" />
+    <Compile Include="Classes\Pieces\Queen.cs" />
+    <Compile Include="Classes\Pieces\King.cs" />
+    <Compile Include="Classes\Pieces\Rook.cs" />
+    <Compile Include="Classes\Pieces\Bishop.cs" />
+    <Compile Include="Classes\Pieces\Knight.cs" />
+    <Compile Include="Classes\Pieces\Pawn.cs" />
+    <Compile Include="Classes\Board.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

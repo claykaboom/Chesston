@@ -5,9 +5,9 @@ using System.Text;
 
 namespace ChessTonGame.Classes.Exceptions
 {
-   public class MovimentoNaoPermitidoException:Exception
+   public class NowAllowedMovementException:Exception
     {
-       public MovimentoNaoPermitidoException():base("Movimento não permitido")
+       public NowAllowedMovementException():base("Movimento não permitido")
        {
 
        }

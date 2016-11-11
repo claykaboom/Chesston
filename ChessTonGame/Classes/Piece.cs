@@ -1,5 +1,5 @@
 ﻿using ChessTonGame.Classes.Events;
-using ChessTonGame.Classes.Pecas;
+using ChessTonGame.Classes.Pieces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -8,10 +8,10 @@ using System.Text;
 
 namespace ChessTonGame.Classes
 {
-    public abstract class Peca //: ICloneable
+    public abstract class Piece //: ICloneable
     {
 
-        public Peca(CorElemento cor, Casa casaAtual, bool pulaOutrasPecas)
+        public Piece(ElementColor cor, Square casaAtual, bool pulaOutrasPecas)
         {
             this._cor = cor;
             this._casaAtual = casaAtual;
@@ -20,7 +20,7 @@ namespace ChessTonGame.Classes
             this.UniqueId = Guid.NewGuid().ToString();
             if (this._tabuleiro.BrancasEmbaixo)
             {
-                if (cor == CorElemento.Branca)
+                if (cor == ElementColor.Branca)
                 {
                     _perspectivaDeBaixo = true;
                 }
@@ -31,7 +31,7 @@ namespace ChessTonGame.Classes
             }
             else
             {
-                if (cor == CorElemento.Preta)
+                if (cor == ElementColor.Preta)
                 {
                     _perspectivaDeBaixo = true;
                 }
@@ -48,10 +48,10 @@ namespace ChessTonGame.Classes
         }
 
         public string UniqueId { get; set; }
-        private Casa _casaAtual;
-        private CorElemento _cor;
-        protected Tabuleiro _tabuleiro;
-        protected List<Peca> _pecasComidas;
+        private Square _casaAtual;
+        private ElementColor _cor;
+        protected Board _tabuleiro;
+        protected List<Piece> _pecasComidas;
         private bool _estaSelecionada = false;
         private bool _jaMoveu = false;
         private bool _perspectivaDeBaixo = false;
@@ -86,7 +86,7 @@ namespace ChessTonGame.Classes
 
         }
 
-        public List<Peca> QuemDeuXeque()
+        public List<Piece> QuemDeuXeque()
         {
             return (
                         from
@@ -99,7 +99,7 @@ namespace ChessTonGame.Classes
                     ).ToList();
         }
 
-        public abstract List<List<Passo>> getRotasPossiveis();
+        public abstract List<List<Step>> getRotasPossiveis();
 
         public event PieceMovedEventHandler PieceMoved;
 
@@ -108,48 +108,48 @@ namespace ChessTonGame.Classes
             return (from moves in _tabuleiro.Movimentos where moves.Peca == this select moves).Count() > 0;
         }
 
-        public bool ehInimigaDe(Peca p)
+        public bool ehInimigaDe(Piece p)
         {
             return p.Cor != this.Cor;
         }
 
-        private Casa getCasaByPasso(Casa casaAtualVerificacao, Passo passo)
+        private Square getCasaByPasso(Square casaAtualVerificacao, Step passo)
         {
-            Casa returningPosition = null;
+            Square returningPosition = null;
             if (this._perspectivaDeBaixo)
             {
                 switch (passo)
                 {
-                    case Passo.Frente:
+                    case Step.Front:
                         returningPosition = casaAtualVerificacao.CasaSuperior;
 
                         break;
-                    case Passo.Tras:
+                    case Step.Back:
                         returningPosition = casaAtualVerificacao.CasaInferior;
                         break;
-                    case Passo.Direita:
+                    case Step.Right:
                         returningPosition = casaAtualVerificacao.CasaDireita;
                         break;
-                    case Passo.Esquerda:
+                    case Step.Left:
                         returningPosition = casaAtualVerificacao.CasaEsquerda;
                         break;
 
                     /////DIAGONALS
 
 
-                    case Passo.DiagonalDireitaFrente:
+                    case Step.DiagonalRightFront:
                         returningPosition = casaAtualVerificacao.CasaSuperiorDireita;
 
                         break;
-                    case Passo.DiagonalEsquerdaFrente:
+                    case Step.DiagonalLeftFront:
                         returningPosition = casaAtualVerificacao.CasaSuperiorEsquerda;
 
                         break;
-                    case Passo.DiagonalDireitaTras:
+                    case Step.DiagonalRightBack:
                         returningPosition = casaAtualVerificacao.CasaInferiorDireita;
 
                         break;
-                    case Passo.DiagonalEsquerdaTras:
+                    case Step.DiagonalLeftBack:
                         returningPosition = casaAtualVerificacao.CasaInferiorEsquerda;
                         break;
 
@@ -160,29 +160,29 @@ namespace ChessTonGame.Classes
             {
                 switch (passo)
                 {
-                    case Passo.Frente:
+                    case Step.Front:
                         returningPosition = casaAtualVerificacao.CasaInferior;
                         break;
-                    case Passo.Tras:
+                    case Step.Back:
                         returningPosition = casaAtualVerificacao.CasaSuperior;
                         break;
-                    case Passo.Direita:
+                    case Step.Right:
                         returningPosition = casaAtualVerificacao.CasaEsquerda;
                         break;
-                    case Passo.Esquerda:
+                    case Step.Left:
                         returningPosition = casaAtualVerificacao.CasaDireita;
                         break;
                     /////DIAGONALS 
-                    case Passo.DiagonalDireitaFrente:
+                    case Step.DiagonalRightFront:
                         returningPosition = casaAtualVerificacao.CasaInferiorEsquerda;
                         break;
-                    case Passo.DiagonalEsquerdaFrente:
+                    case Step.DiagonalLeftFront:
                         returningPosition = casaAtualVerificacao.CasaInferiorDireita;
                         break;
-                    case Passo.DiagonalDireitaTras:
+                    case Step.DiagonalRightBack:
                         returningPosition = casaAtualVerificacao.CasaSuperiorEsquerda;
                         break;
-                    case Passo.DiagonalEsquerdaTras:
+                    case Step.DiagonalLeftBack:
                         returningPosition = casaAtualVerificacao.CasaSuperiorDireita;
                         break;
                 }
@@ -196,27 +196,27 @@ namespace ChessTonGame.Classes
             return returningPosition; //no previous case
         }
 
-        public List<Casa> getCasasPorPassos(List<Passo> passosPossiveis)
+        public List<Square> getCasasPorPassos(List<Step> passosPossiveis)
         {
-            return getCasasPorRota(new List<List<Passo>>() { passosPossiveis });
+            return getCasasPorRota(new List<List<Step>>() { passosPossiveis });
         }
 
 
-        public Casa getCasaPorPassos(List<Passo> passosPossiveis)
+        public Square getCasaPorPassos(List<Step> passosPossiveis)
         {
             return getCasasPorPassos(passosPossiveis).FirstOrDefault();
         }
 
-        public List<Casa> getCasasPorRota(List<List<Passo>> rotasPossiveis)
+        public List<Square> getCasasPorRota(List<List<Step>> rotasPossiveis)
         {
 
-            List<Casa> returnTargets = new List<Casa>();
+            List<Square> returnTargets = new List<Square>();
             foreach (var rota in rotasPossiveis)
             {
-                Casa casaAtualVerificacao = this.CasaAtual;
+                Square casaAtualVerificacao = this.CasaAtual;
                 for (int i = 0; i < rota.Count; i++)
                 {
-                    Passo passo = rota[i];
+                    Step passo = rota[i];
                     if (casaAtualVerificacao == null)
                     {
                         break;
@@ -225,38 +225,38 @@ namespace ChessTonGame.Classes
                     {
 
 
-                        case Passo.FrenteIndefinido:
+                        case Step.FrontUndefined:
                             //get all places ahead
-                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.Frente);
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Step.Front);
                             break;
-                        case Passo.TrasIndefinido:
+                        case Step.BackUndefined:
                             //get all places behind 
-                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.Tras);
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Step.Back);
                             break;
-                        case Passo.DireitaIndefinido:
+                        case Step.RightUndefined:
                             //get all places to the right
-                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.Direita);
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Step.Right);
                             break;
-                        case Passo.EsquerdaIndefinido:
+                        case Step.LeftUndefined:
                             //get all places to the right
 
-                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.Esquerda);
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Step.Left);
                             break;
                         /////DIAGONALS 
 
-                        case Passo.DiagonalDireitaFrenteIndefinido:
-                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.DiagonalDireitaFrente);
+                        case Step.DiagonalRighFrontUndefined:
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Step.DiagonalRightFront);
                             break;
-                        case Passo.DiagonalEsquerdaFrenteIndefinido:
-                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.DiagonalEsquerdaFrente);
+                        case Step.DiagonalLeftFrontUndefined:
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Step.DiagonalLeftFront);
                             break;
-                        case Passo.DiagonalDireitaTrasIndefinido:
+                        case Step.DiagonalRightBackUndefined:
 
-                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.DiagonalDireitaTras);
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Step.DiagonalRightBack);
                             break;
-                        case Passo.DiagonalEsquerdaTrasIndefinido:
+                        case Step.DiagonalLeftBackUndefined:
 
-                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Passo.DiagonalEsquerdaTras);
+                            casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Step.DiagonalLeftBack);
                             break;
 
                         default:
@@ -280,7 +280,7 @@ namespace ChessTonGame.Classes
         }
 
 
-        private Casa getCasasNaRota(List<Casa> returnTargets, Casa casaAtualVerificacao, Passo p)
+        private Square getCasasNaRota(List<Square> returnTargets, Square casaAtualVerificacao, Step p)
         {
             while (casaAtualVerificacao != null)
             {
@@ -307,7 +307,7 @@ namespace ChessTonGame.Classes
             return casaAtualVerificacao;
         }
 
-        public bool PodeMoverPara(Casa casa)
+        public bool PodeMoverPara(Square casa)
         {
             if (casa == this.CasaAtual)
             {
@@ -323,7 +323,7 @@ namespace ChessTonGame.Classes
             return this._tabuleiro.tamanhoCasa;
         }
 
-        public List<Casa> getCasasPossiveis()
+        public List<Square> getCasasPossiveis()
         {
             return
                 (
@@ -337,7 +337,7 @@ namespace ChessTonGame.Classes
                  ).ToList();
         }
 
-        public bool FicaEmXequeNaCasa(Casa casa)
+        public bool FicaEmXequeNaCasa(Square casa)
         {
 
             return false;
@@ -355,7 +355,7 @@ namespace ChessTonGame.Classes
             //  }
         }
 
-        public void MoverPara(Casa casaDestino)
+        public void MoverPara(Square casaDestino)
         {
             if (this.PodeMoverPara(casaDestino))
             {
@@ -385,12 +385,12 @@ namespace ChessTonGame.Classes
             return this._tabuleiro.Movimentos.Where(m => m.Peca == this).ToList();
         }
 
-        public List<Peca> PecasQuePodemSalvarDoXeque()
+        public List<Piece> PecasQuePodemSalvarDoXeque()
         {
-            List<Peca> pecasSalvadoras = new List<Peca>();
+            List<Piece> pecasSalvadoras = new List<Piece>();
             if (this.EstaEmXeque())
             {
-                List<Peca> pecasAmigas = this._tabuleiro.PecasAmigasDe(this).OrderBy(p => p.ValorPontos).ToList(); // we try to protect the current piece first with the lowest value pieces
+                List<Piece> pecasAmigas = this._tabuleiro.PecasAmigasDe(this).OrderBy(p => p.ValorPontos).ToList(); // we try to protect the current piece first with the lowest value pieces
                 //lets perform every possible movement for every piece
                 foreach (var piece in pecasAmigas)
                 {
@@ -419,15 +419,15 @@ namespace ChessTonGame.Classes
 
         public void Deselecionar()
         { this._estaSelecionada = false; }
-        public void Comer(Peca p)
+        public void Comer(Piece p)
         {
             if (_pecasComidas == null)
-                _pecasComidas = new List<Peca>();
+                _pecasComidas = new List<Piece>();
             p.CasaAtual.PecaAtual = null;
             this._pecasComidas.Add(p);
         }
 
-        public void DevolverPecaComida(Peca p)
+        public void DevolverPecaComida(Piece p)
         {
             if (_pecasComidas != null)
             {
@@ -443,7 +443,7 @@ namespace ChessTonGame.Classes
         //}
 
 
-        public Casa CasaAtual
+        public Square CasaAtual
         {
             get
             {
@@ -455,7 +455,7 @@ namespace ChessTonGame.Classes
             }
         }
 
-        public CorElemento Cor
+        public ElementColor Cor
         {
             get
             {

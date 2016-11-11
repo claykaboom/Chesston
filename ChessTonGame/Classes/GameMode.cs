@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ChessTonGame.Classes
 {
-    public enum ModoJogo
+    public enum GameMode
     {
         AlternaTurnos
     }

@@ -86,7 +86,6 @@
             this.ClientSize = new System.Drawing.Size(607, 387);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.pbBoard);
-            this.Location = new System.Drawing.Point(-1024, 0);
             this.Name = "ChessTon";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "ChessTon";
