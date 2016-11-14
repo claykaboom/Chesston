@@ -11,92 +11,92 @@ namespace ChessTonGame.Classes.Pieces
             : base(cor, c, false)
         {
             this.PieceMoved += Rei_PieceMoved;
-            this._tabuleiro.PieceMoved += _tabuleiro_PieceMoved;
+            this._board.PieceMoved += _board_PieceMoved;
         }
 
-        private void _tabuleiro_PieceMoved(Movement m)
+        private void _board_PieceMoved(Movement m)
         {
-            if (m.Peca.Cor == this.Cor && this.EstaEmXeque())
+            if (m.Peca.Cor == this.Cor && this.IsInCheck())
             { 
-                this._tabuleiro.UndoLastMovement();
+                this._board.UndoLastMovement();
             }
 
         }
 
         private void Rei_PieceMoved(Movement m)
         {
-            if (this.EstaEmXeque())
+            if (this.IsInCheck())
             {
             //    this._tabuleiro.UndoLastMovement(); 
             }
         }
 
-        public override decimal ValorPontos
+        public override decimal ValueInPoints
         {
             get { return 5; }
         }
 
-        public override List<List<Step>> getRotasPossiveis()
+        public override List<List<Step>> getPossibleRoutes()
         {
-            List<List<Step>> rotas = new List<List<Step>>();
-            var casaTeste = getCasaPorPassos(new List<Step>() { Step.Front });
-            if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
+            List<List<Step>> routes = new List<List<Step>>();
+            var squareTest = getSquareBySteps(new List<Step>() { Step.Front });
+            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
             {
 
-                rotas.Add(new List<Step>() { Step.Front });
+                routes.Add(new List<Step>() { Step.Front });
             }
-            casaTeste = getCasaPorPassos(new List<Step>() { Step.Back });
-            if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
+            squareTest = getSquareBySteps(new List<Step>() { Step.Back });
+            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
             {
 
-                rotas.Add(new List<Step>() { Step.Back });
-            }
-
-            casaTeste = getCasaPorPassos(new List<Step>() { Step.Right });
-            if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
-            {
-
-                rotas.Add(new List<Step>() { Step.Right });
+                routes.Add(new List<Step>() { Step.Back });
             }
 
-
-            casaTeste = getCasaPorPassos(new List<Step>() { Step.Left });
-            if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
+            squareTest = getSquareBySteps(new List<Step>() { Step.Right });
+            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
             {
 
-                rotas.Add(new List<Step>() { Step.Left });
+                routes.Add(new List<Step>() { Step.Right });
             }
 
 
-            casaTeste = getCasaPorPassos(new List<Step>() { Step.DiagonalRightFront });
-            if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
+            squareTest = getSquareBySteps(new List<Step>() { Step.Left });
+            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
             {
 
-                rotas.Add(new List<Step>() { Step.DiagonalRightFront });
+                routes.Add(new List<Step>() { Step.Left });
             }
 
-            casaTeste = getCasaPorPassos(new List<Step>() { Step.DiagonalRightFront });
-            if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
+
+            squareTest = getSquareBySteps(new List<Step>() { Step.DiagonalRightFront });
+            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
             {
 
-                rotas.Add(new List<Step>() { Step.DiagonalRightFront });
+                routes.Add(new List<Step>() { Step.DiagonalRightFront });
             }
 
-            casaTeste = getCasaPorPassos(new List<Step>() { Step.DiagonalRightBack });
-            if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
+            squareTest = getSquareBySteps(new List<Step>() { Step.DiagonalRightFront });
+            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
             {
 
-                rotas.Add(new List<Step>() { Step.DiagonalRightBack });
+                routes.Add(new List<Step>() { Step.DiagonalRightFront });
             }
 
-            casaTeste = getCasaPorPassos(new List<Step>() { Step.DiagonalLeftBack });
-            if (casaTeste != null && !this.FicaEmXequeNaCasa(casaTeste))
+            squareTest = getSquareBySteps(new List<Step>() { Step.DiagonalRightBack });
+            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
             {
 
-                rotas.Add(new List<Step>() { Step.DiagonalLeftBack });
+                routes.Add(new List<Step>() { Step.DiagonalRightBack });
             }
 
-            return rotas;
+            squareTest = getSquareBySteps(new List<Step>() { Step.DiagonalLeftBack });
+            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
+            {
+
+                routes.Add(new List<Step>() { Step.DiagonalLeftBack });
+            }
+
+            return routes;
         }
 
 

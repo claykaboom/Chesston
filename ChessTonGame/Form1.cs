@@ -13,7 +13,7 @@ namespace ChessTonGame
 {
     public partial class ChessTon : Form
     {
-        Board board = new Board(8, 8, true, GameMode.AlternaTurnos);
+        Board board = new Board(8, 8, true, GameMode.ShiftTurns);
         public ChessTon()
         {
             InitializeComponent();

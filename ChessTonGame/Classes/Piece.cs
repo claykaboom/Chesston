@@ -16,9 +16,9 @@ namespace ChessTonGame.Classes
             this._cor = cor;
             this._casaAtual = casaAtual;
             this._pulaOutrasPecas = pulaOutrasPecas;
-            this._tabuleiro = casaAtual.Tabuleiro;
+            this._board = casaAtual.Tabuleiro;
             this.UniqueId = Guid.NewGuid().ToString();
-            if (this._tabuleiro.BrancasEmbaixo)
+            if (this._board.BrancasEmbaixo)
             {
                 if (cor == ElementColor.Branca)
                 {
@@ -50,17 +50,17 @@ namespace ChessTonGame.Classes
         public string UniqueId { get; set; }
         private Square _casaAtual;
         private ElementColor _cor;
-        protected Board _tabuleiro;
+        protected Board _board;
         protected List<Piece> _pecasComidas;
         private bool _estaSelecionada = false;
         private bool _jaMoveu = false;
         private bool _perspectivaDeBaixo = false;
-        public bool EstaEmXeque()
+        public bool IsInCheck()
         {
             return QuemDeuXeque().Count > 0;
 
         }
-        public abstract decimal ValorPontos { get; }
+        public abstract decimal ValueInPoints { get; }
         private bool _pulaOutrasPecas;
 
         public bool PulaOutrasPecas
@@ -73,7 +73,7 @@ namespace ChessTonGame.Classes
         {
             if (this._pecasComidas == null)
                 return 0;
-            return this._pecasComidas.Sum(p => p.ValorPontos);
+            return this._pecasComidas.Sum(p => p.ValueInPoints);
         }
 
         public bool EstaSelecionada
@@ -92,20 +92,20 @@ namespace ChessTonGame.Classes
                         from
                             peca
                         in
-                            this._tabuleiro.PecasInimigasDe(this)
+                            this._board.PecasInimigasDe(this)
                         where
                             peca.PodeMoverPara(this._casaAtual)
                         select peca
                     ).ToList();
         }
 
-        public abstract List<List<Step>> getRotasPossiveis();
+        public abstract List<List<Step>> getPossibleRoutes();
 
         public event PieceMovedEventHandler PieceMoved;
 
         public bool JaMoveu()
         {
-            return (from moves in _tabuleiro.Movimentos where moves.Peca == this select moves).Count() > 0;
+            return (from moves in _board.Movimentos where moves.Peca == this select moves).Count() > 0;
         }
 
         public bool ehInimigaDe(Piece p)
@@ -202,7 +202,7 @@ namespace ChessTonGame.Classes
         }
 
 
-        public Square getCasaPorPassos(List<Step> passosPossiveis)
+        public Square getSquareBySteps(List<Step> passosPossiveis)
         {
             return getCasasPorPassos(passosPossiveis).FirstOrDefault();
         }
@@ -313,14 +313,14 @@ namespace ChessTonGame.Classes
             {
                 return false;
             }
-            return ((from casaDestino in this.getCasasPorRota(this.getRotasPossiveis()) where casaDestino == casa select casaDestino).FirstOrDefault() != null);
+            return ((from casaDestino in this.getCasasPorRota(this.getPossibleRoutes()) where casaDestino == casa select casaDestino).FirstOrDefault() != null);
         }
 
 
         public abstract Image getImage();
         public int getTamanhoPeca()
         {
-            return this._tabuleiro.tamanhoCasa;
+            return this._board.tamanhoCasa;
         }
 
         public List<Square> getCasasPossiveis()
@@ -330,14 +330,14 @@ namespace ChessTonGame.Classes
                     from
                         casa
                     in
-                        this._tabuleiro.TodasCasas()
+                        this._board.TodasCasas()
                     where
                         (this.PodeMoverPara(casa) == true)
                     select casa
                  ).ToList();
         }
 
-        public bool FicaEmXequeNaCasa(Square casa)
+        public bool IsInCheckInSquare(Square casa)
         {
 
             return false;
@@ -375,22 +375,22 @@ namespace ChessTonGame.Classes
                 {
                     PieceMoved(m);
                 }
-                this._tabuleiro.Movimentos.Add(m);
+                this._board.Movimentos.Add(m);
             }
 
         }
 
         public List<Movement> getMovements()
         {
-            return this._tabuleiro.Movimentos.Where(m => m.Peca == this).ToList();
+            return this._board.Movimentos.Where(m => m.Peca == this).ToList();
         }
 
         public List<Piece> PecasQuePodemSalvarDoXeque()
         {
             List<Piece> pecasSalvadoras = new List<Piece>();
-            if (this.EstaEmXeque())
+            if (this.IsInCheck())
             {
-                List<Piece> pecasAmigas = this._tabuleiro.PecasAmigasDe(this).OrderBy(p => p.ValorPontos).ToList(); // we try to protect the current piece first with the lowest value pieces
+                List<Piece> pecasAmigas = this._board.PecasAmigasDe(this).OrderBy(p => p.ValueInPoints).ToList(); // we try to protect the current piece first with the lowest value pieces
                 //lets perform every possible movement for every piece
                 foreach (var piece in pecasAmigas)
                 {
@@ -398,12 +398,12 @@ namespace ChessTonGame.Classes
                     foreach (var casa in piece.getCasasPossiveis())
                     {
                         piece.MoverPara(casa);
-                        if (!this.EstaEmXeque())
+                        if (!this.IsInCheck())
                         {
                             pecasSalvadoras.Add(piece);
 
                         }
-                        _tabuleiro.UndoLastMovement();
+                        _board.UndoLastMovement();
                     }
                 }
             }

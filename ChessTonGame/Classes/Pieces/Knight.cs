@@ -11,12 +11,12 @@ namespace ChessTonGame.Classes.Pieces
             : base(cor, c, true)
         { }
 
-        public override decimal ValorPontos
+        public override decimal ValueInPoints
         {
             get { return 3; }
         }
 
-        public override List<List<Step>> getRotasPossiveis()
+        public override List<List<Step>> getPossibleRoutes()
         {
             List<List<Step>> rotas = new List<List<Step>>();
 

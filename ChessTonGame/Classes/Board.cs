@@ -20,7 +20,7 @@ namespace ChessTonGame.Classes
         private List<List<Square>> _casas;
         private bool _brancasEmbaixo = true;
         private bool _highlightCheckedPieces = true;
-        private GameMode _modoJogo = GameMode.AlternaTurnos;
+        private GameMode _modoJogo = GameMode.ShiftTurns;
         private ElementColor _vezDaCor = ElementColor.Branca;
 
         public string UniqueId { get; set; }
@@ -87,7 +87,7 @@ namespace ChessTonGame.Classes
 
                     if (casa.PecaAtual != null)
                     {
-                        if (this._highlightCheckedPieces && casa.PecaAtual.EstaEmXeque())
+                        if (this._highlightCheckedPieces && casa.PecaAtual.IsInCheck())
                         {
 
                             g.FillRectangle(new SolidBrush(Color.PaleVioletRed), new Rectangle(casa.ColumnIndex * tamanhoCasa, casa.LineIndex * tamanhoCasa, tamanhoCasa, tamanhoCasa));
@@ -265,7 +265,7 @@ namespace ChessTonGame.Classes
                 if (c != this._pecaSelecionada.CasaAtual && this._pecaSelecionada.PodeMoverPara(c))
                 {
                     this._pecaSelecionada.MoverPara(c);
-                    if (this._modoJogo == GameMode.AlternaTurnos)
+                    if (this._modoJogo == GameMode.ShiftTurns)
                     {
                         if (this.VezDaCor == ElementColor.Preta)
                         {
@@ -309,7 +309,7 @@ namespace ChessTonGame.Classes
                     lastMovement.Peca.DevolverPecaComida(lastMovement.PecaAnterior);
                 }
 
-                if (this._modoJogo == GameMode.AlternaTurnos)
+                if (this._modoJogo == GameMode.ShiftTurns)
                 {
                     if (this.VezDaCor == ElementColor.Preta)
                     {

@@ -7,6 +7,6 @@ namespace ChessTonGame.Classes
 {
     public enum GameMode
     {
-        AlternaTurnos
+        ShiftTurns
     }
 }
