@@ -40,6 +40,7 @@ namespace ChessTonGame.Classes.Pieces
                 return Resources.blackRook;
             }
         }
-         
+
+        public override string ToString() => "R";
     }
 }

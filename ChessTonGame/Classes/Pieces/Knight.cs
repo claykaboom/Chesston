@@ -45,5 +45,6 @@ namespace ChessTonGame.Classes.Pieces
             }
         }
 
+        public override string ToString() => "N";
     }
 }

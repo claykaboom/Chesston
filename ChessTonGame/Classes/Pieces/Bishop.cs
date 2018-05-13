@@ -40,6 +40,8 @@ namespace ChessTonGame.Classes.Pieces
                 return Resources.blackBishop;
             }
         }
-         
+
+
+        public override string ToString() => "B";
     }
 }

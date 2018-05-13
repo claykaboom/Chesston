@@ -45,6 +45,7 @@ namespace ChessTonGame.Classes.Pieces
                 return Resources.blackQueen;
             }
         }
-         
+
+        public override string ToString() => "Q";
     }
 }

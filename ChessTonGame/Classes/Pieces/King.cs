@@ -18,7 +18,7 @@ namespace ChessTonGame.Classes.Pieces
         {
             if (m.Peca.Cor == this.Cor && this.IsInCheck())
             { 
-                this._board.UndoLastMovement();
+              //  this._board.UndoLastMovement();
             }
 
         }
@@ -75,11 +75,11 @@ namespace ChessTonGame.Classes.Pieces
                 routes.Add(new List<Step>() { Step.DiagonalRightFront });
             }
 
-            squareTest = getSquareBySteps(new List<Step>() { Step.DiagonalRightFront });
+            squareTest = getSquareBySteps(new List<Step>() { Step.DiagonalLeftFront });
             if (squareTest != null && !this.IsInCheckInSquare(squareTest))
             {
 
-                routes.Add(new List<Step>() { Step.DiagonalRightFront });
+                routes.Add(new List<Step>() { Step.DiagonalLeftFront });
             }
 
             squareTest = getSquareBySteps(new List<Step>() { Step.DiagonalRightBack });
@@ -112,5 +112,6 @@ namespace ChessTonGame.Classes.Pieces
             }
         }
 
+        public override string ToString() => "K";
     }
 }

@@ -264,7 +264,7 @@ namespace ChessTonGame.Classes
             {
                 if (c != this._pecaSelecionada.CasaAtual && this._pecaSelecionada.PodeMoverPara(c))
                 {
-                    this._pecaSelecionada.MoverPara(c);
+                    this._pecaSelecionada.MoverPara(c,true);
                     if (this._modoJogo == GameMode.ShiftTurns)
                     {
                         if (this.VezDaCor == ElementColor.Preta)

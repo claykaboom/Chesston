@@ -32,6 +32,8 @@
             this.button1 = new System.Windows.Forms.Button();
             this.btnSavingPieces = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.txtMoveHistory = new System.Windows.Forms.TextBox();
+            this.btnReDo = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbBoard)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -41,7 +43,7 @@
             this.pbBoard.Dock = System.Windows.Forms.DockStyle.Left;
             this.pbBoard.Location = new System.Drawing.Point(0, 0);
             this.pbBoard.Name = "pbBoard";
-            this.pbBoard.Size = new System.Drawing.Size(481, 387);
+            this.pbBoard.Size = new System.Drawing.Size(481, 496);
             this.pbBoard.TabIndex = 0;
             this.pbBoard.TabStop = false;
             this.pbBoard.Click += new System.EventHandler(this.pbBoard_Click);
@@ -52,7 +54,7 @@
             this.button1.Dock = System.Windows.Forms.DockStyle.Top;
             this.button1.Location = new System.Drawing.Point(0, 0);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(126, 23);
+            this.button1.Size = new System.Drawing.Size(306, 23);
             this.button1.TabIndex = 2;
             this.button1.Text = "Undo";
             this.button1.UseVisualStyleBackColor = true;
@@ -61,9 +63,9 @@
             // btnSavingPieces
             // 
             this.btnSavingPieces.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnSavingPieces.Location = new System.Drawing.Point(0, 23);
+            this.btnSavingPieces.Location = new System.Drawing.Point(0, 46);
             this.btnSavingPieces.Name = "btnSavingPieces";
-            this.btnSavingPieces.Size = new System.Drawing.Size(126, 40);
+            this.btnSavingPieces.Size = new System.Drawing.Size(306, 40);
             this.btnSavingPieces.TabIndex = 3;
             this.btnSavingPieces.Text = "Who can help the current piece?";
             this.btnSavingPieces.UseVisualStyleBackColor = true;
@@ -71,19 +73,42 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtMoveHistory);
             this.panel1.Controls.Add(this.btnSavingPieces);
+            this.panel1.Controls.Add(this.btnReDo);
             this.panel1.Controls.Add(this.button1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(481, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(126, 387);
+            this.panel1.Size = new System.Drawing.Size(306, 496);
             this.panel1.TabIndex = 4;
+            // 
+            // txtMoveHistory
+            // 
+            this.txtMoveHistory.Dock = System.Windows.Forms.DockStyle.Top;
+            this.txtMoveHistory.Location = new System.Drawing.Point(0, 86);
+            this.txtMoveHistory.Multiline = true;
+            this.txtMoveHistory.Name = "txtMoveHistory";
+            this.txtMoveHistory.ReadOnly = true;
+            this.txtMoveHistory.Size = new System.Drawing.Size(306, 228);
+            this.txtMoveHistory.TabIndex = 4;
+            // 
+            // btnReDo
+            // 
+            this.btnReDo.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnReDo.Location = new System.Drawing.Point(0, 23);
+            this.btnReDo.Name = "btnReDo";
+            this.btnReDo.Size = new System.Drawing.Size(306, 23);
+            this.btnReDo.TabIndex = 5;
+            this.btnReDo.Text = "ReDo";
+            this.btnReDo.UseVisualStyleBackColor = true;
+            this.btnReDo.Click += new System.EventHandler(this.btnReDo_Click);
             // 
             // ChessTon
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(607, 387);
+            this.ClientSize = new System.Drawing.Size(787, 496);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.pbBoard);
             this.Name = "ChessTon";
@@ -92,6 +117,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pbBoard)).EndInit();
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -102,6 +128,8 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button btnSavingPieces;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.TextBox txtMoveHistory;
+        private System.Windows.Forms.Button btnReDo;
     }
 }
 

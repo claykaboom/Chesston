@@ -8,7 +8,7 @@ namespace ChessTonGame.Classes
 {
     public class Movements : List<Movement>
     {
-        
+
         public event Events.PieceMovedEventHandler OnMovementAdded;
 
         public new void Add(Movement item)
@@ -18,6 +18,12 @@ namespace ChessTonGame.Classes
             {
                 OnMovementAdded(item);
             }
+        }
+        public override string ToString()
+        {
+            StringBuilder finalString = new StringBuilder();
+            this.ForEach(m => finalString.AppendLine(m.ToString()));
+            return finalString.ToString();
         }
 
     }

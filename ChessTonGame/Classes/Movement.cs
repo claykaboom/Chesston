@@ -7,7 +7,10 @@ namespace ChessTonGame.Classes
 {
     public class Movement
     {
-
+        public override string ToString()
+        {
+            return $"{Peca}{CasaOrigem} to {CasaDestino} - movido por {Peca.Cor.ToString()}";
+        }
         public Movement(Piece p, Square casaOrigem, Square casaDestino)//, Passo passo)
         {
             this.CasaOrigem = casaOrigem;

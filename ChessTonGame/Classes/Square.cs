@@ -91,6 +91,10 @@ namespace ChessTonGame.Classes
         {
             get
             {
+                if (TemporaryColor.HasValue)
+                {
+                    return TemporaryColor.Value;
+                }
                 if (this.cor == ElementColor.Branca)
                 {
                     return Color.Moccasin;
@@ -99,6 +103,8 @@ namespace ChessTonGame.Classes
 
             }
         }
+
+        public Color? TemporaryColor { get; set; }
 
         //public string Nome
         //{
@@ -234,5 +240,10 @@ namespace ChessTonGame.Classes
         //    var clone = (Casa)this.MemberwiseClone();
         //    return clone;
         //}
+
+        public override string ToString()
+        { 
+            return $"{(char)(97 + numeroColuna)}{8- numeroLinha}";
+        }
     }
 }

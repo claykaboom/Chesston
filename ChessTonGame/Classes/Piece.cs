@@ -53,7 +53,7 @@ namespace ChessTonGame.Classes
         protected Board _board;
         protected List<Piece> _pecasComidas;
         private bool _estaSelecionada = false;
-        private bool _jaMoveu = false;
+        private bool _jaMoveu = false; //TODO: Maybe it can be computed so as to have a clear record of moves based on move records.
         private bool _perspectivaDeBaixo = false;
         public bool IsInCheck()
         {
@@ -238,7 +238,7 @@ namespace ChessTonGame.Classes
                             casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Step.Right);
                             break;
                         case Step.LeftUndefined:
-                            //get all places to the right
+                            //get all places to the left
 
                             casaAtualVerificacao = getCasasNaRota(returnTargets, casaAtualVerificacao, Step.Left);
                             break;
@@ -339,8 +339,27 @@ namespace ChessTonGame.Classes
 
         public bool IsInCheckInSquare(Square casa)
         {
-
             return false;
+            //backing data up
+            Piece backUpPiece = casa.PecaAtual;
+            var originalPosition = this.CasaAtual;
+
+
+            bool isInCheck = false;
+            this.MoverPara(casa, false);
+
+            isInCheck = (this.IsInCheck());
+            this.MoverPara(originalPosition, false);
+
+
+            //returning things to its normal status
+            casa.PecaAtual = backUpPiece;
+            if (backUpPiece != null)
+            {
+                backUpPiece.CasaAtual = casa;
+            }
+
+            return isInCheck;
             //  // para essa verificacao vou ter q ter uma nova instancia de tabuleiro, exatamente igual
             //  var cloneBoard = this._tabuleiro.getTabuleiroHipotetico();
             //  // faco operacoes hipoteticas ali
@@ -355,29 +374,43 @@ namespace ChessTonGame.Classes
             //  }
         }
 
-        public void MoverPara(Square casaDestino)
+        public bool MoverPara(Square casaDestino, bool registerMove)
         {
-            if (this.PodeMoverPara(casaDestino))
+            if (!registerMove)
             {
-                var m = new Movement(this, this.CasaAtual, casaDestino);
-                if (casaDestino.PecaAtual != null) // está cheia
-                {
-                    this.Comer(casaDestino.PecaAtual);
-                }
 
                 this.CasaAtual.PecaAtual = null;
                 this._casaAtual = casaDestino;
                 casaDestino.PecaAtual = this;
-                this._jaMoveu = true;
-
-
-                if (PieceMoved != null)
-                {
-                    PieceMoved(m);
-                }
-                this._board.Movimentos.Add(m);
+                return true;
             }
+            else
+            {
+                if (this.PodeMoverPara(casaDestino))
+                {
+                    var m = new Movement(this, this.CasaAtual, casaDestino);
+                    if (casaDestino.PecaAtual != null) // está cheia
+                    {
+                        this.Comer(casaDestino.PecaAtual);
 
+                    }
+
+                    this.CasaAtual.PecaAtual = null;
+                    this._casaAtual = casaDestino;
+                    casaDestino.PecaAtual = this;
+
+
+                    this._jaMoveu = true;
+                    if (PieceMoved != null)
+                    {
+                        PieceMoved(m);
+                    }
+                    this._board.Movimentos.Add(m);
+
+                    return true;
+                }
+            }
+            return false;
         }
 
         public List<Movement> getMovements()
@@ -391,19 +424,26 @@ namespace ChessTonGame.Classes
             if (this.IsInCheck())
             {
                 List<Piece> pecasAmigas = this._board.PecasAmigasDe(this).OrderBy(p => p.ValueInPoints).ToList(); // we try to protect the current piece first with the lowest value pieces
+                // maybe it can save itself, so we add this piece as a friend of self:
+               // pecasAmigas.Add(this);
                 //lets perform every possible movement for every piece
                 foreach (var piece in pecasAmigas)
                 {
                     //fazemos todos os possiveis movimentos
                     foreach (var casa in piece.getCasasPossiveis())
                     {
-                        piece.MoverPara(casa);
-                        if (!this.IsInCheck())
+                        var currentPosition = piece.CasaAtual;
+                        if (piece.MoverPara(casa, false)) // if move took place
                         {
-                            pecasSalvadoras.Add(piece);
+                            if (!this.IsInCheck())
+                            {
+                                pecasSalvadoras.Add(piece);
 
+                            }
+
+                            piece.MoverPara(currentPosition, false);
+                            // _board.UndoLastMovement();
                         }
-                        _board.UndoLastMovement();
                     }
                 }
             }
@@ -461,6 +501,11 @@ namespace ChessTonGame.Classes
             {
                 return _cor;
             }
+        }
+
+        public override string ToString()
+        {
+            return "|";
         }
     }
 }
