@@ -1,0 +1,13 @@
+ e2 to e4 - movido por Branca
+ e7 to e5 - movido por Preta
+ d2 to d3 - movido por Branca
+Bf8 to b4 - movido por Preta
+ c2 to c3 - movido por Branca
+Bb4 to a5 - movido por Preta
+Qd1 to f3 - movido por Branca
+Ng8 to f6 - movido por Preta
+Bf1 to e2 - movido por Branca
+ d7 to d6 - movido por Preta
+ h2 to h3 - movido por Branca
+Ba5 to b6 - movido por Preta
+Qf3 to g3 - movido por Branca
