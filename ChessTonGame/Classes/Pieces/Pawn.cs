@@ -10,7 +10,7 @@ namespace ChessTonGame.Classes.Pieces
     {
 
         public Pawn(ElementColor cor, Square casa)
-            : base(cor, casa, false)
+            : base(cor, casa, false, true,true, false)
         {
             this.PieceMoved += Peao_PieceMoved;
             this._board.MovementUndone += _tabuleiro_MovementUndone;
@@ -278,6 +278,6 @@ namespace ChessTonGame.Classes.Pieces
             }
         }
 
-        public override string ToString() => "";
+        public override string ToString() => " ";
     }
 }

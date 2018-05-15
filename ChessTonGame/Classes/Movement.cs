@@ -20,6 +20,26 @@ namespace ChessTonGame.Classes
             //   this.PassoDado = passo;
 
         }
+
+        public static Movement GetMovement(string MoveInfo, Board b, ElementColor c, IPieceFactory pFactory)
+        {
+            //'Bf8 to b4 - movido por Preta'
+            string piece = MoveInfo.Substring(0, 1);
+            string startPosCol = MoveInfo.Substring(1, 1);
+            int startPosLine = Convert.ToInt32(MoveInfo.Substring(2, 1));
+            string endPosCol = MoveInfo.Substring(7, 1);
+            int endPosLine = Convert.ToInt32(MoveInfo.Substring(8, 1));
+
+            int startCol = (int)(Convert.ToChar(startPosCol));
+
+            int endCol = (int)(Convert.ToChar(endPosCol));
+            Square sStart = b.Casas[8-startPosLine][  startCol - 97];
+            Square sEnd = b.Casas[ 8-endPosLine][  endCol- 97];
+            Movement m = new Movement(pFactory.ProducePiece(piece, c, sStart), sStart, sEnd);
+            return m;
+        }
+
+
         public Square CasaOrigem { get; private set; }
         public Square CasaDestino { get; private set; }
         public Piece Peca { get; private set; }

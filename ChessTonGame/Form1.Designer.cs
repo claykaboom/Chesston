@@ -34,6 +34,8 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.txtMoveHistory = new System.Windows.Forms.TextBox();
             this.btnReDo = new System.Windows.Forms.Button();
+            this.btnResetBoard = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbBoard)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -73,6 +75,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.button2);
+            this.panel1.Controls.Add(this.btnResetBoard);
             this.panel1.Controls.Add(this.txtMoveHistory);
             this.panel1.Controls.Add(this.btnSavingPieces);
             this.panel1.Controls.Add(this.btnReDo);
@@ -89,7 +93,6 @@
             this.txtMoveHistory.Location = new System.Drawing.Point(0, 86);
             this.txtMoveHistory.Multiline = true;
             this.txtMoveHistory.Name = "txtMoveHistory";
-            this.txtMoveHistory.ReadOnly = true;
             this.txtMoveHistory.Size = new System.Drawing.Size(306, 228);
             this.txtMoveHistory.TabIndex = 4;
             // 
@@ -103,6 +106,27 @@
             this.btnReDo.Text = "ReDo";
             this.btnReDo.UseVisualStyleBackColor = true;
             this.btnReDo.Click += new System.EventHandler(this.btnReDo_Click);
+            // 
+            // btnResetBoard
+            // 
+            this.btnResetBoard.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnResetBoard.Location = new System.Drawing.Point(0, 314);
+            this.btnResetBoard.Name = "btnResetBoard";
+            this.btnResetBoard.Size = new System.Drawing.Size(306, 23);
+            this.btnResetBoard.TabIndex = 6;
+            this.btnResetBoard.Text = "Reset Board";
+            this.btnResetBoard.UseVisualStyleBackColor = true;
+            this.btnResetBoard.Click += new System.EventHandler(this.btnResetBoard_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(96, 363);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 7;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // ChessTon
             // 
@@ -130,6 +154,8 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox txtMoveHistory;
         private System.Windows.Forms.Button btnReDo;
+        private System.Windows.Forms.Button btnResetBoard;
+        private System.Windows.Forms.Button button2;
     }
 }
 

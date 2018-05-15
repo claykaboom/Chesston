@@ -46,6 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\ClassicPieceFactory.cs" />
+    <Compile Include="Classes\Events\CheckMateEventHandler.cs" />
+    <Compile Include="Classes\Events\PieceSelectedEventHandler.cs" />
+    <Compile Include="Classes\IPieceFactory.cs" />
     <Compile Include="Classes\Square.cs" />
     <Compile Include="Classes\ElementColor.cs" />
     <Compile Include="Classes\Events\PieceMovedEventHandler.cs" />

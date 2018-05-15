@@ -11,13 +11,21 @@ namespace ChessTonGame.Classes
     public abstract class Piece //: ICloneable
     {
 
-        public Piece(ElementColor cor, Square casaAtual, bool pulaOutrasPecas)
+        public Piece(ElementColor cor, Square casaAtual, bool pulaOutrasPecas, bool canMoveToCheckPosition, bool canBeInCheckAfterFriendlyMove, bool isGameOverIfCantBeSavedFromCheck)
         {
             this._cor = cor;
             this._casaAtual = casaAtual;
             this._pulaOutrasPecas = pulaOutrasPecas;
             this._board = casaAtual.Tabuleiro;
+            this._canMoveToCheckPosition = canMoveToCheckPosition;
+            this. _canBeInCheckAfterFriendlyMove = canBeInCheckAfterFriendlyMove;
+            this._isGameOverIfCantBeSavedFromCheck =  isGameOverIfCantBeSavedFromCheck;
             this.UniqueId = Guid.NewGuid().ToString();
+
+
+            this._board.PieceMoved += _board_PieceMoved;
+
+
             if (this._board.BrancasEmbaixo)
             {
                 if (cor == ElementColor.Branca)
@@ -47,6 +55,23 @@ namespace ChessTonGame.Classes
             }
         }
 
+        private void _board_PieceMoved(Movement m)
+        {
+            if(m.Peca.Cor == this.Cor)//it is a friendly move
+            {
+                if(!this._canBeInCheckAfterFriendlyMove && this.IsInCheck())
+                {
+                    //last move should be aborted due to this pieces restriction.
+                    this._board.UndoLastMovement();
+                }
+
+            }
+            if(_isGameOverIfCantBeSavedFromCheck && this.IsInCheck() && this.PecasQuePodemSalvarDoXeque().Count() == 0)
+            {
+                _board.DeclaraXequeMate(this.Cor ); 
+            }
+        }
+
         public string UniqueId { get; set; }
         private Square _casaAtual;
         private ElementColor _cor;
@@ -55,6 +80,9 @@ namespace ChessTonGame.Classes
         private bool _estaSelecionada = false;
         private bool _jaMoveu = false; //TODO: Maybe it can be computed so as to have a clear record of moves based on move records.
         private bool _perspectivaDeBaixo = false;
+        private bool _canMoveToCheckPosition = true;
+        private bool _canBeInCheckAfterFriendlyMove = true;
+        private bool _isGameOverIfCantBeSavedFromCheck = false;
         public bool IsInCheck()
         {
             return QuemDeuXeque().Count > 0;
@@ -313,7 +341,39 @@ namespace ChessTonGame.Classes
             {
                 return false;
             }
-            return ((from casaDestino in this.getCasasPorRota(this.getPossibleRoutes()) where casaDestino == casa select casaDestino).FirstOrDefault() != null);
+            if (this._canMoveToCheckPosition)
+            {
+                return (
+                    from casaDestino
+                        in this.getCasasPorRota(this.getPossibleRoutes())
+                    where casaDestino == casa
+
+                    select casaDestino
+                        ).FirstOrDefault() != null
+                        ;
+            }
+            else
+            {
+
+
+
+                return (
+                   from casaDestino
+                       in this.getCasasPorRota(this.getPossibleRoutes())
+                   where casaDestino == casa
+                   && (
+                        from
+                            peca
+                        in
+                            this._board.PecasInimigasDe(this)
+                        where
+                            peca.PodeMoverPara(casaDestino)
+                        select peca
+                    ).ToList().Count == 0
+                   select casaDestino
+                       ).FirstOrDefault() != null
+                       ;
+            }
         }
 
 
@@ -337,58 +397,27 @@ namespace ChessTonGame.Classes
                  ).ToList();
         }
 
-        public bool IsInCheckInSquare(Square casa)
-        {
-            return false;
-            //backing data up
-            Piece backUpPiece = casa.PecaAtual;
-            var originalPosition = this.CasaAtual;
 
 
-            bool isInCheck = false;
-            this.MoverPara(casa, false);
-
-            isInCheck = (this.IsInCheck());
-            this.MoverPara(originalPosition, false);
-
-
-            //returning things to its normal status
-            casa.PecaAtual = backUpPiece;
-            if (backUpPiece != null)
-            {
-                backUpPiece.CasaAtual = casa;
-            }
-
-            return isInCheck;
-            //  // para essa verificacao vou ter q ter uma nova instancia de tabuleiro, exatamente igual
-            //  var cloneBoard = this._tabuleiro.getTabuleiroHipotetico();
-            //  // faco operacoes hipoteticas ali
-            //  var minhaCasaReal = this.CasaAtual;
-            //  var minhaCasaHipotetica = cloneBoard.getCasa(minhaCasaReal.ColumnIndex, minhaCasaReal.LineIndex);
-            //  var casaHipoteticaDestino = cloneBoard.getCasa(casa.ColumnIndex, casa.LineIndex);
-            //  var minhaVersaoHipotetica = minhaCasaHipotetica.PecaAtual;
-            ////  if (!(this is Rei) && minhaVersaoHipotetica.PodeMoverPara(casaHipoteticaDestino))
-            //  {
-            //      minhaVersaoHipotetica.MoverPara(casaHipoteticaDestino);
-            //      return minhaVersaoHipotetica.EstaEmXeque();
-            //  }
-        }
-
-        public bool MoverPara(Square casaDestino, bool registerMove)
+        public Movement MoverPara(Square casaDestino, bool registerMove)
         {
             if (!registerMove)
             {
+                if (casaDestino.PecaAtual == null || (casaDestino.PecaAtual != null && casaDestino.PecaAtual.Cor != this.Cor))
+                {
 
-                this.CasaAtual.PecaAtual = null;
-                this._casaAtual = casaDestino;
-                casaDestino.PecaAtual = this;
-                return true;
+            var m = new Movement(this, this.CasaAtual, casaDestino);
+                    this.CasaAtual.PecaAtual = null;
+                    this._casaAtual = casaDestino;
+                    casaDestino.PecaAtual = this;
+                    return m;
+                }
             }
             else
             {
                 if (this.PodeMoverPara(casaDestino))
                 {
-                    var m = new Movement(this, this.CasaAtual, casaDestino);
+            var m = new Movement(this, this.CasaAtual, casaDestino);
                     if (casaDestino.PecaAtual != null) // está cheia
                     {
                         this.Comer(casaDestino.PecaAtual);
@@ -407,10 +436,10 @@ namespace ChessTonGame.Classes
                     }
                     this._board.Movimentos.Add(m);
 
-                    return true;
+                    return m;
                 }
             }
-            return false;
+            return null;
         }
 
         public List<Movement> getMovements()
@@ -424,8 +453,10 @@ namespace ChessTonGame.Classes
             if (this.IsInCheck())
             {
                 List<Piece> pecasAmigas = this._board.PecasAmigasDe(this).OrderBy(p => p.ValueInPoints).ToList(); // we try to protect the current piece first with the lowest value pieces
-                // maybe it can save itself, so we add this piece as a friend of self:
-               // pecasAmigas.Add(this);
+
+                //maybe it can save itself, so we add this piece as a friend of self:
+                pecasAmigas.Add(this);
+
                 //lets perform every possible movement for every piece
                 foreach (var piece in pecasAmigas)
                 {
@@ -433,7 +464,9 @@ namespace ChessTonGame.Classes
                     foreach (var casa in piece.getCasasPossiveis())
                     {
                         var currentPosition = piece.CasaAtual;
-                        if (piece.MoverPara(casa, false)) // if move took place
+
+                        var m = piece.MoverPara(casa, false);
+                        if (m != null) // if move took place
                         {
                             if (!this.IsInCheck())
                             {
@@ -441,14 +474,14 @@ namespace ChessTonGame.Classes
 
                             }
 
-                            piece.MoverPara(currentPosition, false);
-                            // _board.UndoLastMovement();
+
+                            _board.UndoMove(m);
                         }
                     }
                 }
             }
 
-            return pecasSalvadoras;
+            return pecasSalvadoras.Distinct().ToList();
         }
 
         public void Selecionar()

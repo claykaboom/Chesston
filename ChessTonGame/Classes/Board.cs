@@ -87,12 +87,12 @@ namespace ChessTonGame.Classes
 
                     if (casa.PecaAtual != null)
                     {
-                        if (this._highlightCheckedPieces && casa.PecaAtual.IsInCheck())
+                        if (this._highlightCheckedPieces && casa.PecaAtual.IsInCheck() && !casa.TemporaryColor.HasValue)
                         {
 
                             g.FillRectangle(new SolidBrush(Color.PaleVioletRed), new Rectangle(casa.ColumnIndex * tamanhoCasa, casa.LineIndex * tamanhoCasa, tamanhoCasa, tamanhoCasa));
                         }
-                        if (casa.PecaAtual.EstaSelecionada)
+                        if (casa.PecaAtual.EstaSelecionada && !casa.TemporaryColor.HasValue)
                         {
                             g.FillRectangle(new SolidBrush(Color.PaleGreen), new Rectangle(casa.ColumnIndex * tamanhoCasa, casa.LineIndex * tamanhoCasa, tamanhoCasa, tamanhoCasa));
 
@@ -122,9 +122,12 @@ namespace ChessTonGame.Classes
             return (from peca in this.getTodasPecas() where peca.Cor == p.Cor && peca != p select peca).ToList();
         }
 
-        public void DeclaraXequeMate(ElementColor cor)
+        public void DeclaraXequeMate(ElementColor losingColor)
         {
-            //disparar Evento de XequeMate para a cor informada
+            if (CheckMate != null)
+            {
+                CheckMate(losingColor);
+            }
         }
 
 
@@ -138,6 +141,7 @@ namespace ChessTonGame.Classes
             this.Movimentos.OnMovementAdded += Movimentos_OnAdd;
             //    _todasCasas = new List<Casa>();
             _modoJogo = modoJogo;
+            _vezDaCor = ElementColor.Branca;
             this.UniqueId = Guid.NewGuid().ToString();
 
             this._brancasEmbaixo = brancasEmBaixo;
@@ -255,60 +259,49 @@ namespace ChessTonGame.Classes
             Square c = this.getCasa(xIndex, yIndex);
             if (this._pecaSelecionada == null)
             {
-                if (c != null && c.ehVezDaPecaNaCasa())
-                {
-                    this._pecaSelecionada = c.SelecionarPeca();
-                }
+                SelectPieceInTheSquare(c);
             }
             else
             {
-                if (c != this._pecaSelecionada.CasaAtual && this._pecaSelecionada.PodeMoverPara(c))
+                if (c != this._pecaSelecionada.CasaAtual)
                 {
-                    this._pecaSelecionada.MoverPara(c,true);
-                    if (this._modoJogo == GameMode.ShiftTurns)
+                    if (c!= null && c.PecaAtual != null && c.PecaAtual.Cor == this._pecaSelecionada.Cor)
                     {
-                        if (this.VezDaCor == ElementColor.Preta)
-                        {
-                            this._vezDaCor = ElementColor.Branca;
-                        }
-                        else
-                        {
-                            this._vezDaCor = ElementColor.Preta;
-                        }
+                        SelectPieceInTheSquare(c);
                     }
+                    else
+                    {
+                        Move(c);
+                    } 
                 }
-                DeselecionarPecas();
+                else
+                {
+                    SelectPieceInTheSquare(c);
+                }
             }
         }
-        internal void DeselecionarPecas()
-        {
-            this.getTodasPecas().ForEach(a => a.Deselecionar());
 
-            this._pecaSelecionada = null;
+        public Piece SelectPieceInTheSquare(Square c)
+        {
+            if (c != null && c.ehVezDaPecaNaCasa())
+            {
+                this._pecaSelecionada = c.SelecionarPeca();
+                if (this._pecaSelecionada != null && this.PieceSelected != null)
+                {
+                    this.PieceSelected(this._pecaSelecionada);
+                    return this._pecaSelecionada;
+                }
+            }
+            return null;
         }
 
-        public Movements Movimentos { get; set; }
-        public event PieceMovedEventHandler PieceMoved;
-        public event PieceMovedEventHandler MovementUndone;
-
-        public void UndoLastMovement()
+        public Movement Move(Square c)
         {
-            if (this.Movimentos != null && this.Movimentos.Count > 0)
+            if (c != this._pecaSelecionada.CasaAtual && this._pecaSelecionada.PodeMoverPara(c))
             {
-                var lastMovement = this.Movimentos.LastOrDefault();
-                this.Movimentos?.Remove(lastMovement);
-                //returning moved piece to its origianl position
-                lastMovement.CasaOrigem.PecaAtual = lastMovement.Peca;
-                lastMovement.Peca.CasaAtual = lastMovement.CasaOrigem;
+                Movement m =  this._pecaSelecionada.MoverPara(c, true);
 
-                //returning captured pieces:
-                lastMovement.CasaDestino.PecaAtual = lastMovement.PecaAnterior;
-                if (lastMovement.PecaAnterior != null)
-                {
-                    lastMovement.PecaAnterior.CasaAtual = lastMovement.CasaDestino;
-                    lastMovement.Peca.DevolverPecaComida(lastMovement.PecaAnterior);
-                }
-
+                DeselecionarPecas();
                 if (this._modoJogo == GameMode.ShiftTurns)
                 {
                     if (this.VezDaCor == ElementColor.Preta)
@@ -320,9 +313,72 @@ namespace ChessTonGame.Classes
                         this._vezDaCor = ElementColor.Preta;
                     }
                 }
+                return m;
+            }
+            return null;
+        }
+
+        internal void DeselecionarPecas()
+        {
+            this.getTodasPecas().ForEach(a => a.Deselecionar());
+
+            this._pecaSelecionada = null;
+        }
+
+        public Movements Movimentos { get; set; }
+        public event PieceMovedEventHandler PieceMoved;
+        public event PieceMovedEventHandler MovementUndone;
+        public event PieceSelectedEventHandler PieceSelected;
+        public event CheckMateEventHandler CheckMate;
 
 
-                MovementUndone?.Invoke(lastMovement);
+        private bool IsInCheckInSquare(Piece piece, Square casa)
+        {
+            // we should check if any of the enemy pieces can be here:
+            var piecesCheckingPosition = (from peca in this.PecasInimigasDe(piece)
+                                          where peca.PodeMoverPara(casa)
+                                          select peca).Count();
+
+            return piecesCheckingPosition > 0;
+
+        }
+
+        public void UndoMove(Movement move)
+        {
+            //returning moved piece to its original position
+            move.CasaOrigem.PecaAtual = move.Peca;
+            move.Peca.CasaAtual = move.CasaOrigem;
+
+            //returning captured pieces:
+            move.CasaDestino.PecaAtual = move.PecaAnterior;
+            if (move.PecaAnterior != null)
+            {
+                move.PecaAnterior.CasaAtual = move.CasaDestino;
+                move.Peca.DevolverPecaComida(move.PecaAnterior);
+            }
+
+
+
+        }
+        public void UndoLastMovement()
+        {
+            if (this.Movimentos != null && this.Movimentos.Count > 0)
+            {
+                var lastMove = this.Movimentos.LastOrDefault();
+                this.Movimentos?.Remove(lastMove);
+                UndoMove(lastMove);
+                if (this._modoJogo == GameMode.ShiftTurns)
+                {
+                    if (this.VezDaCor == ElementColor.Preta)
+                    {
+                        this._vezDaCor = ElementColor.Branca;
+                    }
+                    else
+                    {
+                        this._vezDaCor = ElementColor.Preta;
+                    }
+                }
+                MovementUndone?.Invoke(lastMove);
 
             }
 

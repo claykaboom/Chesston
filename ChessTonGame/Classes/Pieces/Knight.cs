@@ -8,7 +8,7 @@ namespace ChessTonGame.Classes.Pieces
     public class Knight : Piece
     { 
         public Knight(ElementColor cor, Square c)
-            : base(cor, c, true)
+            : base(cor, c, true, true, true, false)
         { }
 
         public override decimal ValueInPoints

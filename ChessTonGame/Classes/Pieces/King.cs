@@ -8,7 +8,7 @@ namespace ChessTonGame.Classes.Pieces
     public class King : Piece
     {
         public King(ElementColor cor, Square c)
-            : base(cor, c, false)
+            : base(cor, c, false, false,false,true)
         {
             this.PieceMoved += Rei_PieceMoved;
             this._board.PieceMoved += _board_PieceMoved;
@@ -40,20 +40,20 @@ namespace ChessTonGame.Classes.Pieces
         {
             List<List<Step>> routes = new List<List<Step>>();
             var squareTest = getSquareBySteps(new List<Step>() { Step.Front });
-            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
+            if (squareTest != null  )
             {
 
                 routes.Add(new List<Step>() { Step.Front });
             }
             squareTest = getSquareBySteps(new List<Step>() { Step.Back });
-            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
+            if (squareTest != null  )
             {
 
                 routes.Add(new List<Step>() { Step.Back });
             }
 
             squareTest = getSquareBySteps(new List<Step>() { Step.Right });
-            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
+            if (squareTest != null  )
             {
 
                 routes.Add(new List<Step>() { Step.Right });
@@ -61,7 +61,7 @@ namespace ChessTonGame.Classes.Pieces
 
 
             squareTest = getSquareBySteps(new List<Step>() { Step.Left });
-            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
+            if (squareTest != null  )
             {
 
                 routes.Add(new List<Step>() { Step.Left });
@@ -69,28 +69,28 @@ namespace ChessTonGame.Classes.Pieces
 
 
             squareTest = getSquareBySteps(new List<Step>() { Step.DiagonalRightFront });
-            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
+            if (squareTest != null  )
             {
 
                 routes.Add(new List<Step>() { Step.DiagonalRightFront });
             }
 
             squareTest = getSquareBySteps(new List<Step>() { Step.DiagonalLeftFront });
-            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
+            if (squareTest != null  )
             {
 
                 routes.Add(new List<Step>() { Step.DiagonalLeftFront });
             }
 
             squareTest = getSquareBySteps(new List<Step>() { Step.DiagonalRightBack });
-            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
+            if (squareTest != null  )
             {
 
                 routes.Add(new List<Step>() { Step.DiagonalRightBack });
             }
 
             squareTest = getSquareBySteps(new List<Step>() { Step.DiagonalLeftBack });
-            if (squareTest != null && !this.IsInCheckInSquare(squareTest))
+            if (squareTest != null  )
             {
 
                 routes.Add(new List<Step>() { Step.DiagonalLeftBack });
