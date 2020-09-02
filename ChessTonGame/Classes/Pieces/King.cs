@@ -23,7 +23,7 @@ namespace ChessTonGame.Classes.Pieces
                 mInfo = (Tuple<string, Square, Piece>)m.MovementInfo;
 
             }
-            if (m.Peca == this && mInfo != null && mInfo.Item1 == "O-O")
+            if (m.Peca == this && mInfo != null && ( mInfo.Item1 == "O-O" || mInfo.Item1 == "O-O-O" ))
             {
                 var rook = mInfo.Item3;
                 rook.CasaAtual.PecaAtual = null;
@@ -50,13 +50,22 @@ namespace ChessTonGame.Classes.Pieces
 
                 this._board.UndoLastMovement();
             }
-            if (Math.Abs(m.CasaOrigem.getHorizontalDistanceTo(m.CasaDestino)) == 2) //roque curto
+            if ((m.CasaOrigem.getHorizontalDistanceTo(m.CasaDestino)) == 2) //roque curto
             { //finalizando o roque curto 
                 var rookToTheRight = m.CasaDestino.CasaDireita.PecaAtual;
                 rookToTheRight.CasaAtual = m.CasaDestino.CasaEsquerda;
                 m.CasaDestino.CasaEsquerda.PecaAtual = rookToTheRight;
                 m.CasaDestino.CasaDireita.PecaAtual = null;
                 m.SetMovementInfo(this, new Tuple<string, Square, Piece>("O-O", m.CasaDestino.CasaDireita, rookToTheRight));
+
+            }
+            else if ((m.CasaOrigem.getHorizontalDistanceTo(m.CasaDestino)) == -2) //roque longo
+            { //finalizando o roque curto 
+                var rookToTheLeft = m.CasaDestino.CasaEsquerda.CasaEsquerda.PecaAtual;
+                rookToTheLeft.CasaAtual = m.CasaDestino.CasaDireita;
+                m.CasaDestino.CasaDireita.PecaAtual = rookToTheLeft;
+                m.CasaDestino.CasaEsquerda.CasaEsquerda.PecaAtual = null;
+                m.SetMovementInfo(this, new Tuple<string, Square, Piece>("O-O-O", m.CasaDestino.CasaEsquerda.CasaEsquerda, rookToTheLeft));
 
             }
         }
@@ -122,6 +131,39 @@ namespace ChessTonGame.Classes.Pieces
                     }
                 }
 
+                //ROQUE LONGO
+                if ((this.Cor == ElementColor.Branca && !this._board.BrancasEmbaixo) ||
+                  (this.Cor == ElementColor.Preta && this._board.BrancasEmbaixo)
+                  )
+                {
+                    //se a torre à direita ainda não se moveu e esta peça tb não
+                    if (!this.JaMoveu())
+                    {
+
+                        var pieceFourToTheLeft = this.CasaAtual.CasaEsquerda.CasaEsquerda.CasaEsquerda.CasaEsquerda.PecaAtual;
+                        var isARookThatDidntMove = pieceFourToTheLeft != null && !pieceFourToTheLeft.ehInimigaDe(this) && !pieceFourToTheLeft.JaMoveu();
+                        if (isARookThatDidntMove)
+                        {
+                            //se não tem nenhuma peça inimiga que pode entrar naquela posição:
+                            if (squareTest.getPecasDaCorQuePodemMoverPara(this.getCorInimiga(), "K").Count == 0)
+                            {
+                                squareTest = getSquareBySteps(new List<Step>() { Step.Right, Step.Right });
+                                if (squareTest != null)
+                                {
+                                    //se não tem nenhuma peça inimiga que pode entrar naquela posição:
+                                    if (squareTest.getPecasDaCorQuePodemMoverPara(this.getCorInimiga(), "K").Count == 0)
+                                    {
+
+                                        routes.Add(new List<Step>() { Step.Right, Step.Right });
+                                    }
+                                }
+
+                            }
+                        }
+
+                    }
+                }
+
 
             }
 
@@ -142,6 +184,39 @@ namespace ChessTonGame.Classes.Pieces
 
                         var pieceThreeToTheRight = this.CasaAtual.CasaDireita.CasaDireita.CasaDireita.PecaAtual;
                         var isARookThatDidntMove = pieceThreeToTheRight != null && !pieceThreeToTheRight.ehInimigaDe(this) && !pieceThreeToTheRight.JaMoveu();
+                        if (isARookThatDidntMove)
+                        {
+                            //se não tem nenhuma peça inimiga que pode entrar naquela posição:
+                            if (squareTest.getPecasDaCorQuePodemMoverPara(this.getCorInimiga(), "K").Count == 0)
+                            {
+                                squareTest = getSquareBySteps(new List<Step>() { Step.Left, Step.Left });
+                                if (squareTest != null)
+                                {
+                                    //se não tem nenhuma peça inimiga que pode entrar naquela posição:
+                                    if (squareTest.getPecasDaCorQuePodemMoverPara(this.getCorInimiga(), "K").Count == 0)
+                                    {
+
+                                        routes.Add(new List<Step>() { Step.Left, Step.Left });
+                                    }
+                                }
+
+                            }
+                        }
+
+                    }
+                }
+
+                //ROQUE LONGO
+                if ((this.Cor == ElementColor.Branca && this._board.BrancasEmbaixo) ||
+                    (this.Cor == ElementColor.Preta && !this._board.BrancasEmbaixo)
+                    )
+                {
+                    //se a torre à esquerda ainda não se moveu e esta peça tb não
+                    if (!this.JaMoveu())
+                    {
+
+                        var pieceFourToTheLeft = this.CasaAtual.CasaEsquerda.CasaEsquerda.CasaEsquerda.CasaEsquerda.PecaAtual;
+                        var isARookThatDidntMove = pieceFourToTheLeft != null && !pieceFourToTheLeft.ehInimigaDe(this) && !pieceFourToTheLeft.JaMoveu();
                         if (isARookThatDidntMove)
                         {
                             //se não tem nenhuma peça inimiga que pode entrar naquela posição:
