@@ -23,7 +23,7 @@ namespace ChessTonGame.Classes
             this.UniqueId = Guid.NewGuid().ToString();
 
 
-            this._board.PieceMoved += _board_PieceMoved;
+            this._board.PieceStartedMoving += _board_PieceMoved;
 
 
             if (this._board.BrancasEmbaixo)

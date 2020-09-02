@@ -11,7 +11,7 @@ namespace ChessTonGame.Classes.Pieces
             : base(cor, c, false, false, false, true)
         {
             this.PieceMoved += Rei_PieceMoved;
-            this._board.PieceMoved += _board_PieceMoved;
+            this._board.PieceStartedMoving += _board_PieceMoved;
             this._board.MovementUndone += _board_MovementUndone;
         }
 

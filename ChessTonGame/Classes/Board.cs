@@ -241,9 +241,9 @@ namespace ChessTonGame.Classes
 
         private void Movimentos_OnAdd(Movement m)
         {
-            if (PieceMoved != null)
+            if (PieceStartedMoving != null)
             {
-                PieceMoved(m);
+                PieceStartedMoving(m);
             }
         }
 
@@ -309,6 +309,10 @@ namespace ChessTonGame.Classes
                         this._vezDaCor = ElementColor.Preta;
                     }
                 }
+                if (PieceFinishedMoving != null)
+                {
+                    PieceFinishedMoving(m);
+                }
                 return m;
             }
             return null;
@@ -322,7 +326,8 @@ namespace ChessTonGame.Classes
         }
 
         public Movements Movimentos { get; set; }
-        public event PieceMovedEventHandler PieceMoved;
+        public event PieceMovedEventHandler PieceStartedMoving;
+        public event PieceMovedEventHandler PieceFinishedMoving;
         public event PieceMovedEventHandler MovementUndone;
         public event PieceSelectedEventHandler PieceSelected;
         public event CheckMateEventHandler CheckMate;

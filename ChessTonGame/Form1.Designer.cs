@@ -32,10 +32,11 @@
             this.button1 = new System.Windows.Forms.Button();
             this.btnSavingPieces = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
+            this.btnResetBoard = new System.Windows.Forms.Button();
             this.txtMoveHistory = new System.Windows.Forms.TextBox();
             this.btnReDo = new System.Windows.Forms.Button();
-            this.btnResetBoard = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbBoard)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -75,6 +76,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.button3);
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.btnResetBoard);
             this.panel1.Controls.Add(this.txtMoveHistory);
@@ -86,6 +88,27 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(306, 496);
             this.panel1.TabIndex = 4;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(34, 343);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(168, 23);
+            this.button2.TabIndex = 7;
+            this.button2.Text = "Set Board based on text History";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // btnResetBoard
+            // 
+            this.btnResetBoard.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnResetBoard.Location = new System.Drawing.Point(0, 314);
+            this.btnResetBoard.Name = "btnResetBoard";
+            this.btnResetBoard.Size = new System.Drawing.Size(306, 23);
+            this.btnResetBoard.TabIndex = 6;
+            this.btnResetBoard.Text = "Reset Board";
+            this.btnResetBoard.UseVisualStyleBackColor = true;
+            this.btnResetBoard.Click += new System.EventHandler(this.btnResetBoard_Click);
             // 
             // txtMoveHistory
             // 
@@ -107,26 +130,15 @@
             this.btnReDo.UseVisualStyleBackColor = true;
             this.btnReDo.Click += new System.EventHandler(this.btnReDo_Click);
             // 
-            // btnResetBoard
+            // button3
             // 
-            this.btnResetBoard.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnResetBoard.Location = new System.Drawing.Point(0, 314);
-            this.btnResetBoard.Name = "btnResetBoard";
-            this.btnResetBoard.Size = new System.Drawing.Size(306, 23);
-            this.btnResetBoard.TabIndex = 6;
-            this.btnResetBoard.Text = "Reset Board";
-            this.btnResetBoard.UseVisualStyleBackColor = true;
-            this.btnResetBoard.Click += new System.EventHandler(this.btnResetBoard_Click);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(96, 363);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button3.Location = new System.Drawing.Point(6, 389);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(168, 23);
+            this.button3.TabIndex = 8;
+            this.button3.Text = "Set Black Player as AI";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // ChessTon
             // 
@@ -156,6 +168,7 @@
         private System.Windows.Forms.Button btnReDo;
         private System.Windows.Forms.Button btnResetBoard;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
     }
 }
 

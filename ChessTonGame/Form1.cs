@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using ChessTonGame.Classes;
 using ChessTonGame.Classes.Pieces;
+using ChessTonGame.IA;
 
 namespace ChessTonGame
 {
@@ -37,7 +38,7 @@ namespace ChessTonGame
             board = new Board(8, 8, true, GameMode.ShiftTurns);
 
 
-            board.PieceMoved += Board_PieceMoved;
+            board.PieceStartedMoving += Board_PieceMoved;
             board.MovementUndone += Board_PieceMoved;
             board.MovementUndone += Board_MovementUndone;
             board.PieceSelected += Board_PieceSelected;
@@ -234,6 +235,17 @@ namespace ChessTonGame
                     board.Move(m.CasaDestino);
                 }
             }
+            pbBoard.Image = board.DesenhaTabuleiro();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            RandomPlayer rp = new RandomPlayer(ElementColor.Preta, board);
+            rp.notify += Rp_notify;
+        }
+
+        private void Rp_notify()
+        {
             pbBoard.Image = board.DesenhaTabuleiro();
         }
     }
