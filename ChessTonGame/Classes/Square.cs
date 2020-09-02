@@ -20,6 +20,11 @@ namespace ChessTonGame.Classes
 
         }
 
+        public int getHorizontalDistanceTo(Square other)
+        {
+            return other.numeroColuna - this.numeroColuna;
+        }
+
         public void setContainingBoard(Board t)
         {
             this.tabuleiro = t;
@@ -163,7 +168,7 @@ namespace ChessTonGame.Classes
             }
         }
 
-        public bool ehVezDaPecaNaCasa()
+        public bool ehVezDaPecaDaquelaCorNaCasa()
         {
             return (this.pecaAtual != null && tabuleiro.VezDaCor == this.pecaAtual.Cor);
 
@@ -224,6 +229,11 @@ namespace ChessTonGame.Classes
                 return this.pecaAtual;
             }
             return null;
+        }
+
+        public List<Piece> getPecasDaCorQuePodemMoverPara(ElementColor cor, string exceptPiecesOfType)
+        {
+            return this.tabuleiro.getTodasPecas().Where(p => p.Cor == cor &&   p.ToString() != exceptPiecesOfType &&   p.PodeMoverPara(this)).ToList();
         }
 
         public int CompareTo(Square other)

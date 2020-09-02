@@ -107,11 +107,7 @@ namespace ChessTonGame.Classes
 
         public List<Piece> PecasInimigasDe(Piece p)
         {
-            ElementColor cor = ElementColor.Preta;
-            if (p.Cor == ElementColor.Preta)
-            {
-                cor = ElementColor.Branca;
-            }
+            ElementColor cor = p.getCorInimiga();
 
             return (from peca in this.getTodasPecas() where peca.Cor == cor select peca).ToList();
         }
@@ -283,7 +279,7 @@ namespace ChessTonGame.Classes
 
         public Piece SelectPieceInTheSquare(Square c)
         {
-            if (c != null && c.ehVezDaPecaNaCasa())
+            if (c != null && c.ehVezDaPecaDaquelaCorNaCasa())
             {
                 this._pecaSelecionada = c.SelecionarPeca();
                 if (this._pecaSelecionada != null && this.PieceSelected != null)
@@ -362,6 +358,7 @@ namespace ChessTonGame.Classes
         }
         public void UndoLastMovement()
         {
+            this.DeselecionarPecas();
             if (this.Movimentos != null && this.Movimentos.Count > 0)
             {
                 var lastMove = this.Movimentos.LastOrDefault();

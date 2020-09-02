@@ -18,8 +18,8 @@ namespace ChessTonGame.Classes
             this._pulaOutrasPecas = pulaOutrasPecas;
             this._board = casaAtual.Tabuleiro;
             this._canMoveToCheckPosition = canMoveToCheckPosition;
-            this. _canBeInCheckAfterFriendlyMove = canBeInCheckAfterFriendlyMove;
-            this._isGameOverIfCantBeSavedFromCheck =  isGameOverIfCantBeSavedFromCheck;
+            this._canBeInCheckAfterFriendlyMove = canBeInCheckAfterFriendlyMove;
+            this._isGameOverIfCantBeSavedFromCheck = isGameOverIfCantBeSavedFromCheck;
             this.UniqueId = Guid.NewGuid().ToString();
 
 
@@ -57,18 +57,18 @@ namespace ChessTonGame.Classes
 
         private void _board_PieceMoved(Movement m)
         {
-            if(m.Peca.Cor == this.Cor)//it is a friendly move
+            if (m.Peca.Cor == this.Cor)//it is a friendly move
             {
-                if(!this._canBeInCheckAfterFriendlyMove && this.IsInCheck())
+                if (!this._canBeInCheckAfterFriendlyMove && this.IsInCheck())
                 {
                     //last move should be aborted due to this pieces restriction.
                     this._board.UndoLastMovement();
                 }
 
             }
-            if(_isGameOverIfCantBeSavedFromCheck && this.IsInCheck() && this.PecasQuePodemSalvarDoXeque().Count() == 0)
+            if (_isGameOverIfCantBeSavedFromCheck && this.IsInCheck() && this.PecasQuePodemSalvarDoXeque().Count() == 0)
             {
-                _board.DeclaraXequeMate(this.Cor ); 
+                _board.DeclaraXequeMate(this.Cor);
             }
         }
 
@@ -397,6 +397,17 @@ namespace ChessTonGame.Classes
                  ).ToList();
         }
 
+        public ElementColor getCorInimiga()
+        {
+            ElementColor cor = ElementColor.Preta;
+            if (this.Cor == ElementColor.Preta)
+            {
+                cor = ElementColor.Branca;
+            }
+
+            return cor;
+        }
+
 
 
         public Movement MoverPara(Square casaDestino, bool registerMove)
@@ -406,7 +417,7 @@ namespace ChessTonGame.Classes
                 if (casaDestino.PecaAtual == null || (casaDestino.PecaAtual != null && casaDestino.PecaAtual.Cor != this.Cor))
                 {
 
-            var m = new Movement(this, this.CasaAtual, casaDestino);
+                    var m = new Movement(this, this.CasaAtual, casaDestino);
                     this.CasaAtual.PecaAtual = null;
                     this._casaAtual = casaDestino;
                     casaDestino.PecaAtual = this;
@@ -417,7 +428,7 @@ namespace ChessTonGame.Classes
             {
                 if (this.PodeMoverPara(casaDestino))
                 {
-            var m = new Movement(this, this.CasaAtual, casaDestino);
+                    var m = new Movement(this, this.CasaAtual, casaDestino);
                     if (casaDestino.PecaAtual != null) // está cheia
                     {
                         this.Comer(casaDestino.PecaAtual);
@@ -430,11 +441,12 @@ namespace ChessTonGame.Classes
 
 
                     this._jaMoveu = true;
+
+                    this._board.Movimentos.Add(m);
                     if (PieceMoved != null)
                     {
                         PieceMoved(m);
                     }
-                    this._board.Movimentos.Add(m);
 
                     return m;
                 }
