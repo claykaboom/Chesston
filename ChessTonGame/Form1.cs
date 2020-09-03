@@ -15,7 +15,7 @@ namespace ChessTonGame
     public partial class ChessTon : Form
     {
         Board board = new Board(8, 8, true, GameMode.ShiftTurns);
-
+         
         private List<Movement> redoMoves = new List<Movement>();
 
 
@@ -25,10 +25,14 @@ namespace ChessTonGame
         }
 
         private void Form1_Load(object sender, EventArgs e)
-        {
-
+        { 
 
             ResetBoard();
+
+        }
+
+        private void BackgroundWorkerForm_DoWork(object sender, DoWorkEventArgs e)
+        {
 
         }
 
@@ -125,11 +129,8 @@ namespace ChessTonGame
             p = new King(ElementColor.Branca, board.Casas[7][4]);
             p.PieceMoved += P_PieceMoved;
 
+            refreshControls();
 
-            pbBoard.Image = board.DesenhaTabuleiro();
-
-
-            txtMoveHistory.Text = board.Movimentos.ToString();
         }
 
         private void Board_CheckMate(ElementColor matedColor)
@@ -147,10 +148,28 @@ namespace ChessTonGame
             redoMoves.Add(m);
         }
 
+        private void refreshControls()
+        {
+            pbBoard.Image = board.DesenhaTabuleiro();
+
+            try
+            {
+
+            txtMoveHistory.Text = board.Movimentos.ToString();
+
+            }
+            catch (Exception)
+            {
+                 
+            }
+           
+        }
+
+
         private void Board_PieceMoved(Movement m)
         {
-            ClearTemporaryColors();
-            txtMoveHistory.Text = board.Movimentos.ToString();
+            ClearTemporaryColors(); 
+            refreshControls();
         }
 
         private void ClearTemporaryColors()
@@ -160,8 +179,8 @@ namespace ChessTonGame
 
         private void P_PieceMoved(Movement m)
         {
-            pbBoard.Image = board.DesenhaTabuleiro();
             redoMoves.Clear();
+            refreshControls();
         }
 
         private void btnDesenhaTabuleiro_Click(object sender, EventArgs e)
@@ -177,14 +196,13 @@ namespace ChessTonGame
         private void pbBoard_MouseClick(object sender, MouseEventArgs e)
         {
             board.Click(e.X, e.Y);
-            pbBoard.Image = board.DesenhaTabuleiro();
+            refreshControls();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            board.UndoLastMovement();
-
-            pbBoard.Image = board.DesenhaTabuleiro();
+            board.UndoLastMovement(); 
+            refreshControls();
         }
 
         private void btnSavingPieces_Click(object sender, EventArgs e)
@@ -201,7 +219,7 @@ namespace ChessTonGame
             {
                 MessageBox.Show("Please, select a piece");
             }
-            pbBoard.Image = board.DesenhaTabuleiro();
+            refreshControls();
         }
 
         private void btnReDo_Click(object sender, EventArgs e)
@@ -211,14 +229,14 @@ namespace ChessTonGame
                 var m = redoMoves[redoMoves.Count - 1];
                 redoMoves.Remove(m);
                 m.Peca.MoverPara(m.CasaDestino, true);
-                pbBoard.Image = board.DesenhaTabuleiro();
+                refreshControls();
             }
         }
 
         private void btnResetBoard_Click(object sender, EventArgs e)
         {
-            ResetBoard();
-            pbBoard.Image = board.DesenhaTabuleiro();
+            ResetBoard(); 
+            refreshControls();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -235,18 +253,26 @@ namespace ChessTonGame
                     board.Move(m.CasaDestino);
                 }
             }
-            pbBoard.Image = board.DesenhaTabuleiro();
+            refreshControls();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            RandomPlayer rp = new RandomPlayer(ElementColor.Preta, board);
+            RandomPlayer rp = new RandomPlayer(ElementColor.Preta, board, 1000);
             rp.notify += Rp_notify;
         }
 
         private void Rp_notify()
         {
-            pbBoard.Image = board.DesenhaTabuleiro();
+            refreshControls();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+
+            RandomPlayer rp = new RandomPlayer(ElementColor.Branca, board, 990);
+            rp.Move();
+            rp.notify += Rp_notify;
         }
     }
 }
